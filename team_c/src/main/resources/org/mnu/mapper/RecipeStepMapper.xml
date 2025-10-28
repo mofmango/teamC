@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mnu.mapper.RecipeStepMapper">
+    <insert id="create">
+	    INSERT INTO TBL_RECIPE_STEP (step_id, bno, step_order, description, image_path)
+	    VALUES (seq_recipe_step.nextval, #{bno}, #{step_order}, #{description}, #{image_path, jdbcType=VARCHAR})
+	</insert>
+	
+    <select id="getListByBno" resultType="org.mnu.domain.RecipeStepVO">
+        SELECT * FROM TBL_RECIPE_STEP WHERE bno = #{bno} ORDER BY step_order ASC
+    </select>
+
+    <delete id="deleteByBno">
+        DELETE FROM TBL_RECIPE_STEP WHERE bno = #{bno}
+    </delete>
+</mapper>
