@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mnu.mapper.CommentMapper">
+
+    <!-- 댓글 목록: 레시피 상세에서 호출 -->
+    <select id="getListByBno" resultType="org.mnu.domain.CommentVO">
+        SELECT comment_id,
+               bno,
+               userid,
+               content,
+               regdate
+        FROM TBL_COMMENT
+        WHERE bno = #{bno}
+        ORDER BY comment_id ASC
+    </select>
+
+    <!-- 댓글 등록 -->
+    <insert id="create" parameterType="org.mnu.domain.CommentVO">
+        <selectKey keyProperty="comment_id" order="BEFORE" resultType="long">
+            SELECT SEQ_COMMENT.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO TBL_COMMENT (
+            comment_id,
+            bno,
+            userid,
+            content
+        ) VALUES (
+            #{comment_id},
+            #{bno},
+            #{userid},
+            #{content}
+        )
+    </insert>
+
+    <!-- 댓글 삭제 -->
+    <delete id="remove">
+        DELETE FROM TBL_COMMENT
+        WHERE comment_id = #{comment_id}
+    </delete>
+
+</mapper>

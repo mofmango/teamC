@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mnu.mapper.FollowMapper">
+    <insert id="addFollow">
+        INSERT INTO TBL_FOLLOW (follower_id, following_id) VALUES (#{followerId}, #{followingId})
+    </insert>
+    <delete id="removeFollow">
+        DELETE FROM TBL_FOLLOW WHERE follower_id = #{followerId} AND following_id = #{followingId}
+    </delete>
+    <select id="checkFollow" resultType="int">
+        SELECT COUNT(*) FROM TBL_FOLLOW WHERE follower_id = #{followerId} AND following_id = #{followingId}
+    </select>
+
+    <select id="getFollowerCount" resultType="int">
+        SELECT COUNT(*) FROM TBL_FOLLOW WHERE following_id = #{userid}
+    </select>
+    <select id="getFollowingCount" resultType="int">
+        SELECT COUNT(*) FROM TBL_FOLLOW WHERE follower_id = #{userid}
+    </select>
+    <select id="getFollowerList" resultType="org.mnu.domain.MemberVO">
+        SELECT m.userid, m.username
+        FROM TBL_MEMBER m JOIN TBL_FOLLOW f ON m.userid = f.follower_id
+        WHERE f.following_id = #{userid}
+    </select>
+    <select id="getFollowingList" resultType="org.mnu.domain.MemberVO">
+        SELECT m.userid, m.username
+        FROM TBL_MEMBER m JOIN TBL_FOLLOW f ON m.userid = f.following_id
+        WHERE f.follower_id = #{userid}
+    </select>
+</mapper>
