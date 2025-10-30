@@ -157,6 +157,20 @@ CREATE TABLE TBL_REPORT (
     CONSTRAINT fk_report_reporter FOREIGN KEY (reporter_id) REFERENCES TBL_MEMBER(userid)
 );
 
+CREATE TABLE TBL_COMMENT (
+  comment_id    NUMBER          PRIMARY KEY,
+  bno           NUMBER          NOT NULL,
+  userid        VARCHAR2(50)    NOT NULL,
+  content       CLOB            NOT NULL,
+  regdate       DATE            DEFAULT SYSDATE,
+  CONSTRAINT FK_COMMENT_RECIPE
+    FOREIGN KEY (bno) REFERENCES TBL_RECIPE(bno)
+    ON DELETE CASCADE,
+  CONSTRAINT FK_COMMENT_USER
+    FOREIGN KEY (userid) REFERENCES TBL_MEMBER(userid)
+    ON DELETE CASCADE
+);
+
 CREATE SEQUENCE seq_report;
 
 ALTER TABLE TBL_RECIPE_STEP ADD (ingredients VARCHAR2(500));
