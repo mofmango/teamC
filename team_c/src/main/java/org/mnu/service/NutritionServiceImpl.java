@@ -1,22 +1,32 @@
 package org.mnu.service;
 
 import org.mnu.domain.NutritionVO;
+import org.mnu.mapper.NutritionMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import lombok.extern.log4j.Log4j;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @Log4j
 @Service
 public class NutritionServiceImpl implements NutritionService {
+
+    @Autowired
+    private NutritionMapper nutritionMapper;
 
     // 기본 모델
     private static final String DEFAULT_MODEL = "gemini-1.5-pro";
@@ -26,9 +36,71 @@ public class NutritionServiceImpl implements NutritionService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    /**
+     * (기존) 재료 문자열만 받아서 바로 Gemini로 분석하는 메서드.
+     *  - DB 저장 없이 결과만 반환 (테스트 용도로 그대로 살림)
+     */
     @Override
     public NutritionVO getNutritionInfo(String ingredients) {
+        if (ingredients == null) ingredients = "";
+        return callGeminiAndParse(ingredients);
+    }
 
+    /**
+     * 레시피 상세 조회 시 — DB에서만 영양 성분 읽어오기 (Gemini 호출 없음)
+     */
+    @Override
+    public NutritionVO getByRecipeId(Long recipeId) {
+        if (recipeId == null) return null;
+        return nutritionMapper.selectByRecipeId(recipeId);
+    }
+
+    /**
+     * 레시피 작성/수정 시:
+     *  - 재료 문자열 해시(ingHash) 비교
+     *  - 변경된 경우에만 Gemini 호출
+     *  - TBL_NUTRITION 에 INSERT 또는 UPDATE
+     */
+    @Override
+    public NutritionVO upsertForRecipe(Long recipeId, String ingredients) {
+        if (recipeId == null) {
+            throw new IllegalArgumentException("recipeId must not be null");
+        }
+        if (ingredients == null) ingredients = "";
+
+        String ingHash = sha256(ingredients);
+
+        // 기존 값 조회
+        NutritionVO existing = nutritionMapper.selectByRecipeId(recipeId);
+        if (existing != null && ingHash.equals(existing.getIngHash())) {
+            log.info("[Nutrition] ingredients unchanged, skip Gemini call. recipeId=" + recipeId);
+            return existing;
+        }
+
+        // Gemini 호출 → 영양성분 계산
+        NutritionVO analyzed = callGeminiAndParse(ingredients);
+        analyzed.setRecipeId(recipeId);
+        analyzed.setIngHash(ingHash);
+
+        // DB 업서트
+        int exists = nutritionMapper.existsByRecipeId(recipeId);
+        if (exists > 0) {
+            nutritionMapper.updateByRecipeId(analyzed);
+            log.info("[Nutrition] nutrition updated. recipeId=" + recipeId);
+        } else {
+            nutritionMapper.insert(analyzed);
+            log.info("[Nutrition] nutrition inserted. recipeId=" + recipeId);
+        }
+
+        return nutritionMapper.selectByRecipeId(recipeId);
+    }
+
+    // ============================================================
+    //  밑에는 네가 원래 쓰던 Gemini 로직 그대로 (패키지만 맞춰서 이동)
+    // ============================================================
+
+    // Gemini 호출 + 파싱 통합
+    private NutritionVO callGeminiAndParse(String ingredients) {
         NutritionVO nutritionVO = new NutritionVO();
 
         // ✅ 현재는 테스트용으로 직접 키 입력 (운영시엔 환경변수로 관리)
@@ -245,6 +317,21 @@ public class NutritionServiceImpl implements NutritionService {
             }
         } catch (Exception e) {
             log.error("Error parsing nutrition JSON fields", e);
+        }
+    }
+
+    // 재료 문자열 해시(SHA-256)
+    private String sha256(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashed = md.digest(input.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashed) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 not available", e);
         }
     }
 }

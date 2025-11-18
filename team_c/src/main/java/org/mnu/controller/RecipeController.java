@@ -104,7 +104,16 @@ public class RecipeController {
             }
         }
 
+        // 1) 레시피 DB 저장
         service.register(recipe);
+
+        // 2) 영양성분 계산 + TBL_NUTRITION 업서트
+        //    - 여기서만 Gemini 호출
+        //    - ING_HASH 비교로 같은 재료면 나중에는 다시 호출 안 함
+        if (recipe.getIngredients() != null) {
+            nutritionService.upsertForRecipe(recipe.getBno(), recipe.getIngredients());
+        }
+
         rttr.addFlashAttribute("result", recipe.getBno());
         return "redirect:/recipe/list";
     }
@@ -119,8 +128,11 @@ public class RecipeController {
         model.addAttribute("tagList", tagService.getTagsByBno(bno));
 
         if (recipe != null) {
-            // (추가) 영양성분 정보를 계산하여 모델에 추가
-            model.addAttribute("nutrition", nutritionService.getNutritionInfo(recipe.getIngredients()));
+            // ❌ 예전: 매 조회마다 Gemini 호출
+            // model.addAttribute("nutrition", nutritionService.getNutritionInfo(recipe.getIngredients()));
+
+            // ✅ 이제는 DB에 저장된 영양성분만 조회 (TBL_NUTRITION)
+            model.addAttribute("nutrition", nutritionService.getByRecipeId(bno));
 
             MemberVO loginUser = (MemberVO) session.getAttribute("member");
             if (loginUser != null) {
@@ -159,6 +171,11 @@ public class RecipeController {
 
         if (service.modify(recipe)) {
             rttr.addFlashAttribute("result", "success");
+
+            // 수정 시에도 재료가 바뀌었으면 영양성분 다시 계산해서 DB 갱신
+            if (recipe.getIngredients() != null) {
+                nutritionService.upsertForRecipe(recipe.getBno(), recipe.getIngredients());
+            }
         }
         return "redirect:/recipe/list";
     }
