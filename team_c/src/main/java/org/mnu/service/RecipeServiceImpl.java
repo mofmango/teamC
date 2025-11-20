@@ -1,6 +1,9 @@
 package org.mnu.service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.mnu.domain.Criteria;
 import org.mnu.domain.RecipeVO;
 import org.mnu.mapper.BookmarkMapper;
@@ -145,7 +148,7 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeMapper.countLikesByUser(userid);
     }
     
-    
+    /*
     @Override
     public List<RecipeVO> recommendByUserIngredients(String userid) {
         List<String> ingredients = ingredientMapper.getListByUser(userid);
@@ -154,7 +157,43 @@ public class RecipeServiceImpl implements RecipeService {
         }
         return recipeMapper.findByIngredients(ingredients);
     }
-    
+    */
+    @Override
+    public List<RecipeVO> recommendByUserIngredients(String userid) {
+        // 사용자 냉장고 재료 목록 조회
+        List<String> ingredients = ingredientMapper.getListByUser(userid);
+        // 아래 List<String> 기반 메서드를 재사용
+        return recommendByUserIngredients(ingredients);
+    }
+
+    @Override
+    public List<RecipeVO> recommendByUserIngredients(List<String> ingredientList) {
+
+        // 1) null/빈 리스트 방어
+        if (ingredientList == null || ingredientList.isEmpty()) {
+            log.info("[recommendByUserIngredients] ingredientList is empty");
+            return Collections.emptyList();
+        }
+
+        // 2) 공백/중복 제거
+        List<String> filtered = ingredientList.stream()
+                .filter(s -> s != null)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (filtered.isEmpty()) {
+            log.info("[recommendByUserIngredients] filtered ingredientList is empty");
+            return Collections.emptyList();
+        }
+
+        // 3) Mapper 호출 → TBL_RECIPE_TAG 에서 match_count 계산
+        List<RecipeVO> result = recipeMapper.findByIngredients(filtered);
+        log.info("[recommendByUserIngredients] result size = " 
+                    + (result != null ? result.size() : 0));
+        return result;
+    }
     
     
 }

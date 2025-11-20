@@ -135,16 +135,30 @@
 	</select>
 	  
 	<select id="findByIngredients" resultType="org.mnu.domain.RecipeVO">
-	    SELECT r.*, m.username as writerName, COUNT(rt.tagName) as match_count
-	    FROM TBL_RECIPE r
-	    JOIN TBL_MEMBER m ON r.writer = m.userid
-	    JOIN TBL_RECIPE_TAG rt ON r.bno = rt.bno
-	    WHERE rt.tagName IN
-	    <foreach item="item" index="index" collection="ingredientList" open="(" separator="," close=")">
-	        #{item}
-	    </foreach>
-	    GROUP BY r.bno, r.title, r.writer, r.image_path, r.like_count, r.tags, r.regdate, r.updatedate, m.username
-	    ORDER BY match_count DESC, r.like_count DESC
+	    SELECT
+	        r.*,
+	        m.username AS writerName,
+	        v.match_count
+	    FROM
+	        TBL_RECIPE r
+	        JOIN TBL_MEMBER m ON r.writer = m.userid
+	        JOIN (
+	            SELECT
+	                rt.bno,
+	                COUNT(*) AS match_count
+	            FROM
+	                TBL_RECIPE_TAG rt
+	            WHERE
+	                rt.tagName IN
+	                <foreach item="item" index="index" collection="ingredientList" open="(" separator="," close=")">
+	                    #{item}
+	                </foreach>
+	            GROUP BY
+	                rt.bno
+	        ) v ON r.bno = v.bno
+	    ORDER BY
+	        v.match_count DESC,
+	        r.like_count DESC
 	</select>
 
 </mapper>

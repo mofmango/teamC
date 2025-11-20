@@ -24,6 +24,7 @@
     </ul>
 
 	<hr>
+	<!-- 
     <h3>추천 레시피</h3>
     <table border="1" style="width: 100%; text-align: center;">
         <thead>
@@ -53,7 +54,7 @@
             </c:forEach>
         </tbody>
     </table>
-
+	 -->
 
     <br>
     <button onclick="location.href='/member/mypage'">마이페이지로</button>

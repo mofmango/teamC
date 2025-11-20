@@ -29,5 +29,6 @@ public interface RecipeService {
     public int countLikesByUser(String userid);
     
     public List<RecipeVO> recommendByUserIngredients(String userid);
+    public List<RecipeVO> recommendByUserIngredients(List<String> ingredientList);
     
 }
