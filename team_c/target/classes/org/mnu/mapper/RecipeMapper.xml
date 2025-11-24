@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.mnu.mapper.RecipeMapper">
 
-     <!-- 레시피 목록 + 페이징 + 검색/정렬 -->
+    <!-- 레시피 목록 + 페이징 + 검색/정렬 -->
     <select id="getList" resultType="org.mnu.domain.RecipeVO">
         SELECT *
         FROM (
@@ -28,15 +28,15 @@
                         <trim prefix="AND (" suffix=")" prefixOverrides="OR">
                             <choose>
                                 <!-- 제목 검색 -->
-                                <when test="type == 'T'">
+                                <when test='type == "T"'>
                                     r.title LIKE '%' || #{keyword} || '%'
                                 </when>
                                 <!-- 작성자 검색 -->
-                                <when test="type == 'W'">
+                                <when test='type == "W"'>
                                     m.username LIKE '%' || #{keyword} || '%'
                                 </when>
                                 <!-- 태그 검색 (#제거 후) -->
-                                <when test="type == 'G'">
+                                <when test='type == "G"'>
                                     r.bno IN (
                                         SELECT bno
                                         FROM TBL_RECIPE_TAG
@@ -50,7 +50,7 @@
 
                 <!-- 정렬: 좋아요순 / 최신순 -->
                 <choose>
-                    <when test="sort == 'likes'">
+                    <when test='sort == "likes"'>
                         ORDER BY r.like_count DESC, r.bno DESC
                     </when>
                     <otherwise>
@@ -62,122 +62,112 @@
         WHERE rn BETWEEN #{startRow} AND #{endRow}
     </select>
 
-<insert id="create">
-    <selectKey keyProperty="bno" order="BEFORE" resultType="long">
-        SELECT seq_recipe.nextval FROM DUAL
-    </selectKey>
-    INSERT INTO TBL_RECIPE (bno, title, writer, image_path, ingredients, cost, time_required)
-    VALUES (
-        #{bno}, 
-        #{title}, 
-        #{writer},
-        #{image_path, jdbcType=VARCHAR},
-        #{ingredients, jdbcType=CLOB},
-        #{cost, jdbcType=NUMERIC},
-        #{time_required, jdbcType=VARCHAR}
-    )
-</insert>
-
-
+    <insert id="create">
+        <selectKey keyProperty="bno" order="BEFORE" resultType="long">
+            SELECT seq_recipe.nextval FROM DUAL
+        </selectKey>
+        INSERT INTO TBL_RECIPE (bno, title, writer, image_path, ingredients, cost, time_required)
+        VALUES (
+            #{bno},
+            #{title},
+            #{writer},
+            #{image_path, jdbcType=VARCHAR},
+            #{ingredients, jdbcType=CLOB},
+            #{cost, jdbcType=NUMERIC},
+            #{time_required, jdbcType=VARCHAR}
+        )
+    </insert>
 
     <select id="read" resultType="org.mnu.domain.RecipeVO">
         SELECT r.*, m.username as writerName
         FROM TBL_RECIPE r JOIN TBL_MEMBER m ON r.writer = m.userid
         WHERE r.bno = #{bno}
     </select>
-	<!-- 
+
     <update id="update">
         UPDATE TBL_RECIPE
         SET title = #{title},
             updatedate = sysdate,
-            image_path = #{image_path, jdbcType=VARCHAR}
+            image_path = #{image_path, jdbcType=VARCHAR},
+            ingredients = #{ingredients, jdbcType=CLOB},
+            cost = #{cost, jdbcType=NUMERIC},
+            time_required = #{time_required, jdbcType=VARCHAR}
         WHERE bno = #{bno}
     </update>
-     -->
-<update id="update">
-    UPDATE TBL_RECIPE
-    SET title = #{title},
-        updatedate = sysdate,
-        image_path = #{image_path, jdbcType=VARCHAR},
-        ingredients = #{ingredients, jdbcType=CLOB},
-        cost = #{cost, jdbcType=NUMERIC},
-        time_required = #{time_required, jdbcType=VARCHAR}
-    WHERE bno = #{bno}
-</update>
-	
-    
-    
+
     <delete id="delete">
         DELETE FROM TBL_RECIPE WHERE bno = #{bno}
     </delete>
-    
+
     <select id="getListByWriter" resultType="org.mnu.domain.RecipeVO">
         SELECT r.*, m.username as writerName
         FROM TBL_RECIPE r JOIN TBL_MEMBER m ON r.writer = m.userid
-        WHERE r.writer = #{writer} 
+        WHERE r.writer = #{writer}
         ORDER BY r.bno DESC
     </select>
-    
+
     <select id="getBookmarksByUser" resultType="org.mnu.domain.RecipeVO">
         SELECT T2.*, M.username as writerName
-        FROM TBL_BOOKMARK T1 
+        FROM TBL_BOOKMARK T1
         JOIN TBL_RECIPE T2 ON T1.bno = T2.bno
         JOIN TBL_MEMBER M ON T2.writer = M.userid
         WHERE T1.userid = #{userid}
         ORDER BY T2.bno DESC
     </select>
-    
+
     <select id="getLikesByUser" resultType="org.mnu.domain.RecipeVO">
         SELECT T2.*, M.username as writerName
-        FROM TBL_LIKE T1 
+        FROM TBL_LIKE T1
         JOIN TBL_RECIPE T2 ON T1.bno = T2.bno
         JOIN TBL_MEMBER M ON T2.writer = M.userid
         WHERE T1.userid = #{userid}
         ORDER BY T2.bno DESC
     </select>
-    
+
     <update id="updateLikeCount">
         UPDATE TBL_RECIPE SET like_count = like_count + #{amount} WHERE bno = #{bno}
     </update>
-     
+
     <select id="countByWriter" resultType="int">
         SELECT COUNT(*) FROM TBL_RECIPE WHERE writer = #{writer}
     </select>
+
     <select id="countBookmarksByUser" resultType="int">
         SELECT COUNT(*) FROM TBL_BOOKMARK WHERE userid = #{userid}
     </select>
+
     <select id="countLikesByUser" resultType="int">
-	    SELECT COUNT(*) FROM TBL_LIKE WHERE userid = #{userid}
-	</select>
-	  
-	<select id="findByIngredients" resultType="org.mnu.domain.RecipeVO">
-	    SELECT
-	        r.*,
-	        m.username AS writerName,
-	        v.match_count
-	    FROM
-	        TBL_RECIPE r
-	        JOIN TBL_MEMBER m ON r.writer = m.userid
-	        JOIN (
-	            SELECT
-	                rt.bno,
-	                COUNT(*) AS match_count
-	            FROM
-	                TBL_RECIPE_TAG rt
-	            WHERE
-	                rt.tagName IN
-	                <foreach item="item" index="index" collection="ingredientList" open="(" separator="," close=")">
-	                    #{item}
-	                </foreach>
-	            GROUP BY
-	                rt.bno
-	        ) v ON r.bno = v.bno
-	    ORDER BY
-	        v.match_count DESC,
-	        r.like_count DESC
-	</select>
-	
-	<select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM TBL_LIKE WHERE userid = #{userid}
+    </select>
+
+    <select id="findByIngredients" resultType="org.mnu.domain.RecipeVO">
+        SELECT
+            r.*,
+            m.username AS writerName,
+            v.match_count
+        FROM
+            TBL_RECIPE r
+            JOIN TBL_MEMBER m ON r.writer = m.userid
+            JOIN (
+                SELECT
+                    rt.bno,
+                    COUNT(*) AS match_count
+                FROM
+                    TBL_RECIPE_TAG rt
+                WHERE
+                    rt.tagName IN
+                    <foreach item="item" index="index" collection="ingredientList" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                GROUP BY
+                    rt.bno
+            ) v ON r.bno = v.bno
+        ORDER BY
+            v.match_count DESC,
+            r.like_count DESC
+    </select>
+
+    <select id="getTotalCount" resultType="int">
         SELECT COUNT(*)
         FROM TBL_RECIPE r
         JOIN TBL_MEMBER m ON r.writer = m.userid
@@ -193,13 +183,13 @@
             <if test="type != null and keyword != null and keyword != ''">
                 <trim prefix="AND (" suffix=")" prefixOverrides="OR">
                     <choose>
-                        <when test="type == 'T'.toString()">
+                        <when test='type == "T"'>
                             r.title LIKE '%' || #{keyword} || '%'
                         </when>
-                        <when test="type == 'W'.toString()">
+                        <when test='type == "W"'>
                             m.username LIKE '%' || #{keyword} || '%'
                         </when>
-                        <when test="type == 'G'.toString()">
+                        <when test='type == "G"'>
                             r.bno IN (
                                 SELECT bno
                                 FROM TBL_RECIPE_TAG
@@ -211,8 +201,8 @@
             </if>
         </where>
     </select>
-	
-	    <!-- ========================= -->
+
+    <!-- ========================= -->
     <!-- [마이페이지/유저페이지] 작성 레시피 페이징 -->
     <!-- ========================= -->
     <select id="getMyRecipeList" resultType="org.mnu.domain.RecipeVO">
