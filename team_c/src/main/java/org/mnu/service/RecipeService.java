@@ -31,4 +31,16 @@ public interface RecipeService {
     public List<RecipeVO> recommendByUserIngredients(String userid);
     public List<RecipeVO> recommendByUserIngredients(List<String> ingredientList);
     
+    public int getTotalCount(Criteria cri);
+    
+    // [마이페이지] 내 레시피 페이징
+    public List<RecipeVO> getMyRecipeList(Criteria cri, String writer);
+
+    // [마이페이지] 북마크 페이징
+    public List<RecipeVO> getMyBookmarkList(Criteria cri, String userid);
+
+    // [마이페이지] 좋아요 페이징
+    public List<RecipeVO> getMyLikeList(Criteria cri, String userid);
+
+    
 }

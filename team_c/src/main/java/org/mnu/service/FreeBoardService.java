@@ -1,6 +1,8 @@
 package org.mnu.service;
 
 import java.util.List;
+
+import org.mnu.domain.Criteria;
 import org.mnu.domain.FreeBoardVO;
 
 public interface FreeBoardService {
@@ -13,6 +15,8 @@ public interface FreeBoardService {
 
     public boolean remove(Long bno);
 
-    public List<FreeBoardVO> getList();
+    public List<FreeBoardVO> getList(Criteria cri);
 
+
+    public int getTotalCount();
 }

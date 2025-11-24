@@ -27,12 +27,34 @@
     <div>
         <a href="/recipe/list"><button>전체 목록 보기</button></a>
     </div>
+
+    <!-- 정렬 링크: sort 바꾸면서 나머지 검색 조건은 그대로 유지 -->
     <div style="margin-top: 10px;">
         <strong>정렬:</strong>
-        <a href="/recipe/list?sort=newest&keyword=${cri.keyword}&category=${cri.category}&tag=${cri.tag}">최신순</a> |
-        <a href="/recipe/list?sort=likes&keyword=${cri.keyword}&category=${cri.category}&tag=${cri.tag}">인기순(좋아요순)</a>
+        <c:url var="sortNewestUrl" value="/recipe/list">
+            <c:param name="sort" value="newest" />
+            <c:param name="pageNum" value="1" />
+            <c:param name="amount" value="${cri.amount}" />
+            <c:param name="type" value="${cri.type}" />
+            <c:param name="keyword" value="${cri.keyword}" />
+            <c:param name="category" value="${cri.category}" />
+            <c:param name="tag" value="${cri.tag}" />
+        </c:url>
+        <c:url var="sortLikesUrl" value="/recipe/list">
+            <c:param name="sort" value="likes" />
+            <c:param name="pageNum" value="1" />
+            <c:param name="amount" value="${cri.amount}" />
+            <c:param name="type" value="${cri.type}" />
+            <c:param name="keyword" value="${cri.keyword}" />
+            <c:param name="category" value="${cri.category}" />
+            <c:param name="tag" value="${cri.tag}" />
+        </c:url>
+
+        <a href="${sortNewestUrl}">최신순</a> |
+        <a href="${sortLikesUrl}">인기순(좋아요순)</a>
     </div>
 
+    <!-- 검색 폼 -->
     <form action="/recipe/list" method="get" style="margin-top: 10px;">
         <select name="type">
             <option value="T" ${cri.type == 'T' ? 'selected' : ''}>제목</option>
@@ -41,6 +63,11 @@
         </select>
         <input type="text" name="keyword" placeholder="검색어" value="${cri.keyword}">
         <button type="submit">검색</button>
+        <input type="hidden" name="pageNum" value="1">
+        <input type="hidden" name="amount" value="${cri.amount}">
+        <input type="hidden" name="sort" value="${cri.sort}">
+        <input type="hidden" name="category" value="${cri.category}">
+        <input type="hidden" name="tag" value="${cri.tag}">
     </form>
     <br>
 
@@ -64,7 +91,18 @@
                         </c:if>
                     </td>
                     <td>
-                        <a href="/recipe/get?bno=${recipe.bno}">
+                        <!-- ★ 상세 페이지 링크에 Criteria 다 붙여서 전송 -->
+                        <c:url var="readUrl" value="/recipe/get">
+                            <c:param name="bno" value="${recipe.bno}" />
+                            <c:param name="pageNum" value="${cri.pageNum}" />
+                            <c:param name="amount" value="${cri.amount}" />
+                            <c:param name="sort" value="${cri.sort}" />
+                            <c:param name="type" value="${cri.type}" />
+                            <c:param name="keyword" value="${cri.keyword}" />
+                            <c:param name="category" value="${cri.category}" />
+                            <c:param name="tag" value="${cri.tag}" />
+                        </c:url>
+                        <a href="${readUrl}">
                             <c:out value="${recipe.title}"/>
                         </a>
                     </td>
@@ -75,6 +113,61 @@
         </tbody>
     </table>
 
+    <!-- 페이징 영역 -->
+    <c:if test="${not empty pageMaker}">
+        <div style="margin-top: 20px; text-align: center;">
+
+            <!-- 이전 블럭 -->
+            <c:if test="${pageMaker.prev}">
+                <c:url var="prevUrl" value="/recipe/list">
+                    <c:param name="pageNum" value="${pageMaker.startPage - 1}" />
+                    <c:param name="amount" value="${cri.amount}" />
+                    <c:param name="sort" value="${cri.sort}" />
+                    <c:param name="type" value="${cri.type}" />
+                    <c:param name="keyword" value="${cri.keyword}" />
+                    <c:param name="category" value="${cri.category}" />
+                    <c:param name="tag" value="${cri.tag}" />
+                </c:url>
+                <a href="${prevUrl}">이전</a>
+            </c:if>
+
+            <!-- 페이지 번호들 -->
+            <c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+                <c:choose>
+                    <c:when test="${cri.pageNum == num}">
+                        <strong>[${num}]</strong>
+                    </c:when>
+                    <c:otherwise>
+                        <c:url var="pageUrl" value="/recipe/list">
+                            <c:param name="pageNum" value="${num}" />
+                            <c:param name="amount" value="${cri.amount}" />
+                            <c:param name="sort" value="${cri.sort}" />
+                            <c:param name="type" value="${cri.type}" />
+                            <c:param name="keyword" value="${cri.keyword}" />
+                            <c:param name="category" value="${cri.category}" />
+                            <c:param name="tag" value="${cri.tag}" />
+                        </c:url>
+                        <a href="${pageUrl}">[${num}]</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <!-- 다음 블럭 -->
+            <c:if test="${pageMaker.next}">
+                <c:url var="nextUrl" value="/recipe/list">
+                    <c:param name="pageNum" value="${pageMaker.endPage + 1}" />
+                    <c:param name="amount" value="${cri.amount}" />
+                    <c:param name="sort" value="${cri.sort}" />
+                    <c:param name="type" value="${cri.type}" />
+                    <c:param name="keyword" value="${cri.keyword}" />
+                    <c:param name="category" value="${cri.category}" />
+                    <c:param name="tag" value="${cri.tag}" />
+                </c:url>
+                <a href="${nextUrl}">다음</a>
+            </c:if>
+
+        </div>
+    </c:if>
 
 </body>
 </html>

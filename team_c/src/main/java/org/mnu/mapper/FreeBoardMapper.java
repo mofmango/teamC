@@ -1,11 +1,14 @@
 package org.mnu.mapper;
 
 import java.util.List;
+
+import org.mnu.domain.Criteria;
 import org.mnu.domain.FreeBoardVO;
 
 public interface FreeBoardMapper {
 
-    public List<FreeBoardVO> getList();
+
+    public List<FreeBoardVO> getList(Criteria cri);
 
     public void create(FreeBoardVO board);
 
@@ -15,4 +18,6 @@ public interface FreeBoardMapper {
 
     public int update(FreeBoardVO board);
 
+
+    public int getTotalCount();
 }

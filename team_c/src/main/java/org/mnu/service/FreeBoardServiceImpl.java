@@ -1,6 +1,8 @@
 package org.mnu.service;
 
 import java.util.List;
+
+import org.mnu.domain.Criteria;
 import org.mnu.domain.FreeBoardVO;
 import org.mnu.mapper.FreeBoardMapper;
 import org.springframework.stereotype.Service;
@@ -39,8 +41,14 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     }
 
     @Override
-    public List<FreeBoardVO> getList() {
-        log.info("getList..........");
-        return mapper.getList();
+    public List<FreeBoardVO> getList(Criteria cri) {
+        log.info("getList with criteria......" + cri);
+        return mapper.getList(cri);
     }
+
+    @Override
+    public int getTotalCount() {
+        return mapper.getTotalCount();
+    }
+    
 }

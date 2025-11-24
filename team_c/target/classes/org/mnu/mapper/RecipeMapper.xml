@@ -4,54 +4,64 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.mnu.mapper.RecipeMapper">
 
-   <select id="getList" resultType="org.mnu.domain.RecipeVO">
-        SELECT r.*, m.username as writerName
-        FROM TBL_RECIPE r JOIN TBL_MEMBER m ON r.writer = m.userid
-        <where>
-            <if test="tag != null and tag != ''">
-                r.bno IN (SELECT bno FROM TBL_RECIPE_TAG WHERE tagName = #{tag})
-            </if>
-            
-            <if test="type != null and keyword != null and keyword != ''">
-                <trim prefix="AND (" suffix=")" prefixOverrides="OR">
-                    <choose>
-                        <when test="type == 'T'.toString()">
-                            r.title LIKE '%' || #{keyword} || '%'
-                        </when>
-                        <when test="type == 'W'.toString()">
-                            m.username LIKE '%' || #{keyword} || '%'
-                        </when>
-                        <when test="type == 'G'.toString()">
-                            r.bno IN (SELECT bno FROM TBL_RECIPE_TAG WHERE tagName LIKE '%' || LTRIM(#{keyword}, '#') || '%')
-                        </when>
-                    </choose>
-                </trim>
-            </if>
-        </where>
-        <choose>
-            <when test="sort == 'likes'">
-                ORDER BY r.like_count DESC, r.bno DESC
-            </when>
-            <otherwise>
-                ORDER BY r.bno DESC
-            </otherwise>
-        </choose>
-    </select>
-	
-	<!--
-    <insert id="create">
-        <selectKey keyProperty="bno" order="BEFORE" resultType="long">
-            SELECT seq_recipe.nextval FROM DUAL
-        </selectKey>
-        INSERT INTO TBL_RECIPE (bno, title, writer, image_path)
-        VALUES (
-            #{bno}, 
-            #{title}, 
-            #{writer},
-            #{image_path, jdbcType=VARCHAR}
+     <!-- 레시피 목록 + 페이징 + 검색/정렬 -->
+    <select id="getList" resultType="org.mnu.domain.RecipeVO">
+        SELECT *
+        FROM (
+            SELECT rownum rn, a.*
+            FROM (
+                SELECT r.*, m.username AS writerName
+                FROM TBL_RECIPE r
+                JOIN TBL_MEMBER m ON r.writer = m.userid
+                <where>
+                    <!-- 태그 필터 -->
+                    <if test="tag != null and tag != ''">
+                        r.bno IN (
+                            SELECT bno
+                            FROM TBL_RECIPE_TAG
+                            WHERE tagName = #{tag}
+                        )
+                    </if>
+
+                    <!-- 검색(type + keyword) -->
+                    <if test="type != null and keyword != null and keyword != ''">
+                        <trim prefix="AND (" suffix=")" prefixOverrides="OR">
+                            <choose>
+                                <!-- 제목 검색 -->
+                                <when test="type == 'T'">
+                                    r.title LIKE '%' || #{keyword} || '%'
+                                </when>
+                                <!-- 작성자 검색 -->
+                                <when test="type == 'W'">
+                                    m.username LIKE '%' || #{keyword} || '%'
+                                </when>
+                                <!-- 태그 검색 (#제거 후) -->
+                                <when test="type == 'G'">
+                                    r.bno IN (
+                                        SELECT bno
+                                        FROM TBL_RECIPE_TAG
+                                        WHERE tagName LIKE '%' || LTRIM(#{keyword}, '#') || '%'
+                                    )
+                                </when>
+                            </choose>
+                        </trim>
+                    </if>
+                </where>
+
+                <!-- 정렬: 좋아요순 / 최신순 -->
+                <choose>
+                    <when test="sort == 'likes'">
+                        ORDER BY r.like_count DESC, r.bno DESC
+                    </when>
+                    <otherwise>
+                        ORDER BY r.bno DESC
+                    </otherwise>
+                </choose>
+            ) a
         )
-    </insert>
-    -->
+        WHERE rn BETWEEN #{startRow} AND #{endRow}
+    </select>
+
     <insert id="create">
 	    <selectKey keyProperty="bno" order="BEFORE" resultType="long">
 	        SELECT seq_recipe.nextval FROM DUAL
@@ -160,5 +170,96 @@
 	        v.match_count DESC,
 	        r.like_count DESC
 	</select>
+	
+	<select id="getTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_RECIPE r
+        JOIN TBL_MEMBER m ON r.writer = m.userid
+        <where>
+            <if test="tag != null and tag != ''">
+                r.bno IN (
+                    SELECT bno
+                    FROM TBL_RECIPE_TAG
+                    WHERE tagName = #{tag}
+                )
+            </if>
+
+            <if test="type != null and keyword != null and keyword != ''">
+                <trim prefix="AND (" suffix=")" prefixOverrides="OR">
+                    <choose>
+                        <when test="type == 'T'.toString()">
+                            r.title LIKE '%' || #{keyword} || '%'
+                        </when>
+                        <when test="type == 'W'.toString()">
+                            m.username LIKE '%' || #{keyword} || '%'
+                        </when>
+                        <when test="type == 'G'.toString()">
+                            r.bno IN (
+                                SELECT bno
+                                FROM TBL_RECIPE_TAG
+                                WHERE tagName LIKE '%' || LTRIM(#{keyword}, '#') || '%'
+                            )
+                        </when>
+                    </choose>
+                </trim>
+            </if>
+        </where>
+    </select>
+	
+	    <!-- ========================= -->
+    <!-- [마이페이지/유저페이지] 작성 레시피 페이징 -->
+    <!-- ========================= -->
+    <select id="getMyRecipeList" resultType="org.mnu.domain.RecipeVO">
+        SELECT *
+        FROM (
+            SELECT rownum rn, a.*
+            FROM (
+                SELECT r.*, m.username AS writerName
+                FROM TBL_RECIPE r
+                JOIN TBL_MEMBER m ON r.writer = m.userid
+                WHERE r.writer = #{writer}
+                ORDER BY r.bno DESC
+            ) a
+        )
+        WHERE rn BETWEEN #{cri.startRow} AND #{cri.endRow}
+    </select>
+
+    <!-- ========================= -->
+    <!-- [마이페이지] 북마크 페이징 -->
+    <!-- ========================= -->
+    <select id="getMyBookmarkList" resultType="org.mnu.domain.RecipeVO">
+        SELECT *
+        FROM (
+            SELECT rownum rn, a.*
+            FROM (
+                SELECT r.*, m.username AS writerName
+                FROM TBL_BOOKMARK b
+                JOIN TBL_RECIPE r ON b.bno = r.bno
+                JOIN TBL_MEMBER m ON r.writer = m.userid
+                WHERE b.userid = #{userid}
+                ORDER BY r.bno DESC
+            ) a
+        )
+        WHERE rn BETWEEN #{cri.startRow} AND #{cri.endRow}
+    </select>
+
+    <!-- ========================= -->
+    <!-- [마이페이지] 좋아요 페이징 -->
+    <!-- ========================= -->
+    <select id="getMyLikeList" resultType="org.mnu.domain.RecipeVO">
+        SELECT *
+        FROM (
+            SELECT rownum rn, a.*
+            FROM (
+                SELECT r.*, m.username AS writerName
+                FROM TBL_LIKE l
+                JOIN TBL_RECIPE r ON l.bno = r.bno
+                JOIN TBL_MEMBER m ON r.writer = m.userid
+                WHERE l.userid = #{userid}
+                ORDER BY r.bno DESC
+            ) a
+        )
+        WHERE rn BETWEEN #{cri.startRow} AND #{cri.endRow}
+    </select>
 
 </mapper>

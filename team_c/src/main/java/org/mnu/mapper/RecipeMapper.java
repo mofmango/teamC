@@ -7,8 +7,8 @@ import org.mnu.domain.RecipeVO;
 
 public interface RecipeMapper {
     // 전체 레시피 목록 조회
-    public List<RecipeVO> getList();
-    
+    // public List<RecipeVO> getList();
+	public List<RecipeVO> getList(Criteria cri);
     // 레시피 등록
     public void create(RecipeVO recipe);
     
@@ -28,10 +28,22 @@ public interface RecipeMapper {
     public List<RecipeVO> getListByWriter(String writer);
     // 좋아요 수 업데이트 메서드
     public void updateLikeCount(@Param("bno") Long bno, @Param("amount") int amount);
+    
+    public List<RecipeVO> getMyRecipeList(
+            @Param("cri") Criteria cri,
+            @Param("writer") String writer);
+    public List<RecipeVO> getMyBookmarkList(
+            @Param("cri") Criteria cri,
+            @Param("userid") String userid);
+    
+    public List<RecipeVO> getMyLikeList(
+            @Param("cri") Criteria cri,
+            @Param("userid") String userid);
 
+    
+    
     public List<RecipeVO> getBookmarksByUser(String userid);
     
-    public List<RecipeVO> getList(Criteria cri);
     
     public List<RecipeVO> getLikesByUser(String userid);
     
@@ -43,6 +55,9 @@ public interface RecipeMapper {
     public int countLikesByUser(String userid);
     
     public List<RecipeVO> findByIngredients(@Param("ingredientList") List<String> ingredientList);
+    
+
+    public int getTotalCount(Criteria cri);
     
     
 }

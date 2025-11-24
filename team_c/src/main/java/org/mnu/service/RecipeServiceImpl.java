@@ -132,7 +132,13 @@ public class RecipeServiceImpl implements RecipeService {
         log.info("getLikes by user: " + userid);
         return recipeMapper.getLikesByUser(userid);
     }
-
+    
+    @Override
+    public int getTotalCount(Criteria cri) {
+        log.info("getTotalCount with criteria: " + cri);
+        return recipeMapper.getTotalCount(cri);
+    }
+    
     @Override
     public int countByWriter(String writer) {
         return recipeMapper.countByWriter(writer);
@@ -193,6 +199,24 @@ public class RecipeServiceImpl implements RecipeService {
         log.info("[recommendByUserIngredients] result size = " 
                     + (result != null ? result.size() : 0));
         return result;
+    }
+
+    @Override
+    public List<RecipeVO> getMyRecipeList(Criteria cri, String writer) {
+        log.info("getMyRecipeList : writer = " + writer + ", cri = " + cri);
+        return recipeMapper.getMyRecipeList(cri, writer);
+    }
+
+    @Override
+    public List<RecipeVO> getMyBookmarkList(Criteria cri, String userid) {
+        log.info("getMyBookmarkList : userid = " + userid + ", cri = " + cri);
+        return recipeMapper.getMyBookmarkList(cri, userid);
+    }
+
+    @Override
+    public List<RecipeVO> getMyLikeList(Criteria cri, String userid) {
+        log.info("getMyLikeList : userid = " + userid + ", cri = " + cri);
+        return recipeMapper.getMyLikeList(cri, userid);
     }
     
     

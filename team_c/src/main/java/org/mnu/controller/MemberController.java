@@ -1,6 +1,11 @@
 package org.mnu.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.mnu.domain.Criteria;
 import org.mnu.domain.MemberVO;
+import org.mnu.domain.PageDTO;
 import org.mnu.service.FollowService;
 import org.mnu.service.MemberService;
 import org.mnu.service.RecipeService;
@@ -12,11 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-
 
 @Controller
 @Log4j
@@ -29,7 +32,7 @@ public class MemberController {
     @Setter(onMethod_ = @Autowired)
     private RecipeService recipeService;
     
-    // FollowService 의존성 주입 추가
+    // FollowService 의존성 주입
     @Setter(onMethod_ = @Autowired)
     private FollowService followService;
 
@@ -91,37 +94,55 @@ public class MemberController {
             model.addAttribute("followingCount", followService.getFollowingCount(userid));
         }
     }
-    // 팔로워 목록 페이지를 보여주는 메서드 추가
+
+    // 팔로워 목록
     @GetMapping("/followers")
     public String followers(@RequestParam("userid") String userid, Model model) {
         model.addAttribute("userList", followService.getFollowerList(userid));
         model.addAttribute("title", "팔로워 목록");
-        return "/member/followList"; // followers.jsp 대신 공통으로 사용할 followList.jsp를 가리킴
+        return "/member/followList";
     }
     
-    // 팔로잉 목록 페이지를 보여주는 메서드 추가
+    // 팔로잉 목록
     @GetMapping("/following")
     public String following(@RequestParam("userid") String userid, Model model) {
         model.addAttribute("userList", followService.getFollowingList(userid));
         model.addAttribute("title", "팔로잉 목록");
-        return "/member/followList"; // following.jsp 대신 공통으로 사용할 followList.jsp를 가리킴
+        return "/member/followList";
     }
     
+    // 다른 사람 유저 페이지
     @GetMapping("/userpage")
-    public String userpage(@RequestParam("userid") String userid, Model model, HttpSession session) {
+    public String userpage(@RequestParam("userid") String userid,
+                           Criteria cri,
+                           Model model,
+                           HttpSession session) {
+
         log.info("====== " + userid + "님의 페이지로 이동 ======");
 
-        // 1. 페이지 주인의 정보를 가져옴
+        // ✅ 공백 방지
+        userid = userid.trim();
+
+        // ✅ 기본 페이징값
+        if (cri.getPageNum() == 0) cri.setPageNum(1);
+        if (cri.getAmount() == 0) cri.setAmount(10);
+
+        // 1. 페이지 주인 정보
         model.addAttribute("pageOwner", service.get(userid));
 
-        // 2. 페이지 주인이 쓴 글 목록
-        model.addAttribute("myList", recipeService.getListByWriter(userid));
+        // 2. 페이지 주인이 쓴 글(페이징)
+        model.addAttribute("myList", recipeService.getMyRecipeList(cri, userid));
 
-        // 3. 페이지 주인의 팔로워/팔로잉 수
+        // 3. total count → pageMaker
+        int total = recipeService.countByWriter(userid);
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
+        model.addAttribute("cri", cri);
+
+        // 팔로워/팔로잉 수
         model.addAttribute("followerCount", followService.getFollowerCount(userid));
         model.addAttribute("followingCount", followService.getFollowingCount(userid));
-        
-        // 4. 현재 로그인한 사용자가 이 페이지 주인을 팔로우하고 있는지 여부
+
+        // 팔로우 여부
         MemberVO loginUser = (MemberVO) session.getAttribute("member");
         if (loginUser != null) {
             boolean isFollowing = followService.isFollowing(loginUser.getUserid(), userid);
@@ -130,25 +151,82 @@ public class MemberController {
 
         return "/member/userpage";
     }
-    
+
+    // =============== [마이페이지 - 내가 쓴 글] 페이징 ===============
     @GetMapping("/myposts")
-    public String myposts(String userid, Model model) {
-        model.addAttribute("list", recipeService.getListByWriter(userid));
+    public String myposts(Criteria cri, HttpSession session, Model model, RedirectAttributes rttr) {
+        log.info("====== 내가 작성한 레시피 목록(페이징) ======");
+
+        MemberVO member = (MemberVO) session.getAttribute("member");
+        if (member == null) {
+            rttr.addFlashAttribute("result", "login_required");
+            return "redirect:/member/login";
+        }
+        String userid = member.getUserid();
+
+        // 기본값 세팅
+        if (cri.getPageNum() == 0) cri.setPageNum(1);
+        if (cri.getAmount() == 0) cri.setAmount(10);
+
+        // 서비스 호출 (구현: RecipeServiceImpl.getMyRecipeList)
+        int total = recipeService.countByWriter(userid);
+        model.addAttribute("list", recipeService.getMyRecipeList(cri, userid));
+        model.addAttribute("cri", cri);
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
+        model.addAttribute("userid", userid);   // JSP에서 다시 링크 만들 때 사용
+
         return "/member/myPostList";
     }
 
+    // =============== [마이페이지 - 북마크] 페이징 ===============
     @GetMapping("/mybookmarks")
-    public String mybookmarks(String userid, Model model) {
-        model.addAttribute("list", recipeService.getBookmarksByUser(userid));
+    public String mybookmarks(Criteria cri, HttpSession session, Model model, RedirectAttributes rttr) {
+        log.info("====== 내가 북마크한 레시피 목록(페이징) ======");
+
+        MemberVO member = (MemberVO) session.getAttribute("member");
+        if (member == null) {
+            rttr.addFlashAttribute("result", "login_required");
+            return "redirect:/member/login";
+        }
+        String userid = member.getUserid();
+
+        if (cri.getPageNum() == 0) cri.setPageNum(1);
+        if (cri.getAmount() == 0) cri.setAmount(10);
+
+        int total = recipeService.countBookmarksByUser(userid);
+        model.addAttribute("list", recipeService.getMyBookmarkList(cri, userid));
+        model.addAttribute("cri", cri);
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
+        model.addAttribute("userid", userid);
+
         return "/member/bookmarkList";
     }
 
+    // =============== [마이페이지 - 좋아요] 페이징 ===============
     @GetMapping("/mylikes")
-    public String mylikes(String userid, Model model) {
-        model.addAttribute("list", recipeService.getLikesByUser(userid));
+    public String mylikes(Criteria cri, HttpSession session, Model model, RedirectAttributes rttr) {
+        log.info("====== 내가 좋아요 누른 레시피 목록(페이징) ======");
+
+        MemberVO member = (MemberVO) session.getAttribute("member");
+        if (member == null) {
+            rttr.addFlashAttribute("result", "login_required");
+            return "redirect:/member/login";
+        }
+        String userid = member.getUserid();
+
+        if (cri.getPageNum() == 0) cri.setPageNum(1);
+        if (cri.getAmount() == 0) cri.setAmount(10);
+
+        int total = recipeService.countLikesByUser(userid);
+        model.addAttribute("list", recipeService.getMyLikeList(cri, userid));
+        model.addAttribute("cri", cri);
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
+        model.addAttribute("userid", userid);
+
         return "/member/likeList";
     }
     
+
     @GetMapping("/myfridge")
     public void myfridge(HttpSession session, Model model) {
         log.info("====== 나의 냉장고 페이지로 이동 ======");
@@ -157,6 +235,5 @@ public class MemberController {
             model.addAttribute("recommendList", recipeService.recommendByUserIngredients(member.getUserid()));
         }
     }
-    
     
 }

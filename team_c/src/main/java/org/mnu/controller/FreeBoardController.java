@@ -3,6 +3,8 @@ package org.mnu.controller;
 import javax.servlet.http.HttpSession;
 import org.mnu.domain.FreeBoardVO;
 import org.mnu.domain.MemberVO;
+import org.mnu.domain.Criteria;
+import org.mnu.domain.PageDTO;
 import org.mnu.service.FreeBoardService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,9 +25,21 @@ public class FreeBoardController {
     private FreeBoardService service;
 
     @GetMapping("/list")
-    public void list(Model model) {
-        log.info("====== 자유 게시판 목록 ======");
-        model.addAttribute("list", service.getList());
+    public void list(Criteria cri, Model model) {
+        log.info("====== 자유 게시판 목록 ====== " + cri);
+
+        if (cri.getPageNum() == 0) {
+            cri.setPageNum(1);
+        }
+        if (cri.getAmount() == 0) {
+            cri.setAmount(10);   // 한 페이지 10개
+        }
+
+        model.addAttribute("list", service.getList(cri));
+        model.addAttribute("cri", cri);
+
+        int total = service.getTotalCount();
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
     }
 
     @GetMapping("/register")

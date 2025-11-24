@@ -55,6 +55,39 @@
             <button>새 글 등록</button>
         </a>
     </c:if>
+<!-- 페이징 영역 -->
+    <c:if test="${not empty pageMaker}">
+        <div style="margin-top: 20px; text-align: center;">
 
+            <c:if test="${pageMaker.prev}">
+                <a href="/free/list?pageNum=${pageMaker.startPage - 1}
+                                   &amount=${cri.amount}">
+                    이전
+                </a>
+            </c:if>
+
+            <c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+                <c:choose>
+                    <c:when test="${cri.pageNum == num}">
+                        <strong>[${num}]</strong>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="/free/list?pageNum=${num}
+                                           &amount=${cri.amount}">
+                            [${num}]
+                        </a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <c:if test="${pageMaker.next}">
+                <a href="/free/list?pageNum=${pageMaker.endPage + 1}
+                                   &amount=${cri.amount}">
+                    다음
+                </a>
+            </c:if>
+
+        </div>
+    </c:if>
 </body>
 </html>

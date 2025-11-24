@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 import javax.servlet.http.HttpSession;
-
 import org.mnu.domain.Criteria;
+import org.mnu.domain.PageDTO;
 import org.mnu.domain.MemberVO;
 import org.mnu.domain.RecipeStepVO;
 import org.mnu.domain.RecipeVO;
@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,13 +43,37 @@ public class RecipeController {
     private CommentService commentService;
     private FollowService followService;
     private NutritionService nutritionService;
-
+    /*
     @GetMapping("/list")
     public void list(Criteria cri, Model model) {
         log.info("list with criteria: " + cri);
         model.addAttribute("list", service.getList(cri));
         model.addAttribute("cri", cri);
     }
+    */
+    
+    @GetMapping("/list")
+    public void list(Criteria cri, Model model) {
+        log.info("list with criteria: " + cri);
+
+        // 기본값 세팅 (null/0 방지)
+        if (cri.getPageNum() == 0) {
+            cri.setPageNum(1);
+        }
+        if (cri.getAmount() == 0) {
+            cri.setAmount(10);   // 한 페이지 10개 고정
+        }
+
+        List<RecipeVO> list = service.getList(cri);
+        int total = service.getTotalCount(cri);
+
+        model.addAttribute("list", list);
+        model.addAttribute("cri", cri);
+        model.addAttribute("pageMaker", new PageDTO(cri, total));
+    }
+    
+    
+    
 
     @GetMapping("/register")
     public void register() {
@@ -117,7 +142,7 @@ public class RecipeController {
         rttr.addFlashAttribute("result", recipe.getBno());
         return "redirect:/recipe/list";
     }
-    
+    /*
     @GetMapping("/get")
     public void get(@RequestParam("bno") Long bno, Model model, HttpSession session) {
         log.info("====== 레시피 상세 조회 페이지 ======");
@@ -128,10 +153,6 @@ public class RecipeController {
         model.addAttribute("tagList", tagService.getTagsByBno(bno));
 
         if (recipe != null) {
-            // ❌ 예전: 매 조회마다 Gemini 호출
-            // model.addAttribute("nutrition", nutritionService.getNutritionInfo(recipe.getIngredients()));
-
-            // ✅ 이제는 DB에 저장된 영양성분만 조회 (TBL_NUTRITION)
             model.addAttribute("nutrition", nutritionService.getByRecipeId(bno));
 
             MemberVO loginUser = (MemberVO) session.getAttribute("member");
@@ -141,8 +162,33 @@ public class RecipeController {
             }
         }
     }
+	*/
+    @GetMapping("/get")
+    public void get(@RequestParam("bno") Long bno,
+                    @ModelAttribute("cri") Criteria cri,  // ★ 추가
+                    Model model,
+                    HttpSession session) {
+        log.info("====== 레시피 상세 조회 페이지 ======");
+        log.info("bno = " + bno);
+        log.info("cri = " + cri);
 
+        RecipeVO recipe = service.get(bno);
+        model.addAttribute("recipe", recipe);
+        model.addAttribute("commentList", commentService.getList(bno));
+        model.addAttribute("tagList", tagService.getTagsByBno(bno));
+
+        if (recipe != null) {
+            model.addAttribute("nutrition", nutritionService.getByRecipeId(bno));
+
+            MemberVO loginUser = (MemberVO) session.getAttribute("member");
+            if (loginUser != null) {
+                boolean isFollowing = followService.isFollowing(loginUser.getUserid(), recipe.getWriter());
+                model.addAttribute("isFollowing", isFollowing);
+            }
+        }
+    }
     
+    /*
     @GetMapping("/modify")
     public void modify(@RequestParam("bno") Long bno, Model model) {
         log.info("====== 레시피 수정 페이지로 이동 ======");
@@ -150,7 +196,19 @@ public class RecipeController {
         model.addAttribute("recipe", recipe);
         model.addAttribute("tagString", String.join(",", tagService.getTagsByBno(bno)));
     }
-    
+    */
+    @GetMapping("/modify")
+    public void modify(@RequestParam("bno") Long bno,
+                       @ModelAttribute("cri") Criteria cri,   // ★ 추가
+                       Model model) {
+        log.info("====== 레시피 수정 페이지로 이동 ======");
+        log.info("cri = " + cri);
+
+        RecipeVO recipe = service.get(bno);
+        model.addAttribute("recipe", recipe);
+        model.addAttribute("tagString", String.join(",", tagService.getTagsByBno(bno)));
+    }
+    /*
     @PostMapping("/modify")
     public String modify(RecipeVO recipe, MultipartFile uploadFile, RedirectAttributes rttr) {
         log.info("====== 레시피 수정 처리 ======");
@@ -179,7 +237,46 @@ public class RecipeController {
         }
         return "redirect:/recipe/list";
     }
-    
+    */
+    @PostMapping("/modify")
+    public String modify(RecipeVO recipe,
+                         @ModelAttribute("cri") Criteria cri,   // ★ 추가
+                         MultipartFile uploadFile,
+                         RedirectAttributes rttr) {
+        log.info("====== 레시피 수정 처리 ======");
+
+        if (uploadFile != null && !uploadFile.isEmpty()) {
+            String uploadFolder = "/Users/mof/upload";
+            String originalFileName = uploadFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            String savedFileName = uuid + "_" + originalFileName;
+            File saveFile = new File(uploadFolder, savedFileName);
+            try {
+                uploadFile.transferTo(saveFile);
+                recipe.setImage_path("/uploads/" + savedFileName);
+            } catch (Exception e) {
+                log.error("File upload error", e);
+            }
+        }
+
+        if (service.modify(recipe)) {
+            rttr.addFlashAttribute("result", "success");
+            if (recipe.getIngredients() != null) {
+                nutritionService.upsertForRecipe(recipe.getBno(), recipe.getIngredients());
+            }
+        }
+
+        // ★ 리스트로 돌아갈 때 페이지 정보 유지
+        rttr.addAttribute("pageNum", cri.getPageNum());
+        rttr.addAttribute("amount", cri.getAmount());
+        rttr.addAttribute("type", cri.getType());
+        rttr.addAttribute("keyword", cri.getKeyword());
+        rttr.addAttribute("tag", cri.getTag());
+        rttr.addAttribute("sort", cri.getSort());
+
+        return "redirect:/recipe/list";
+    }
+    /*
     @PostMapping("/remove")
     public String remove(@RequestParam("bno") Long bno, RedirectAttributes rttr) {
         log.info("====== 레시피 삭제 처리 ======");
@@ -188,6 +285,26 @@ public class RecipeController {
         }
         return "redirect:/recipe/list";
     }
+    */
+    @PostMapping("/remove")
+    public String remove(@RequestParam("bno") Long bno,
+                         @ModelAttribute("cri") Criteria cri,   // ★ 추가
+                         RedirectAttributes rttr) {
+        log.info("====== 레시피 삭제 처리 ======");
+        if (service.remove(bno)) {
+            rttr.addFlashAttribute("result", "success");
+        }
+
+        rttr.addAttribute("pageNum", cri.getPageNum());
+        rttr.addAttribute("amount", cri.getAmount());
+        rttr.addAttribute("type", cri.getType());
+        rttr.addAttribute("keyword", cri.getKeyword());
+        rttr.addAttribute("tag", cri.getTag());
+        rttr.addAttribute("sort", cri.getSort());
+
+        return "redirect:/recipe/list";
+    }
+    
     
     @PostMapping(value="/uploadSummernoteImageFile", produces = "application/json")
     @ResponseBody

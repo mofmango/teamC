@@ -10,6 +10,17 @@
 </head>
 <body>
 
+    <!-- ★ 목록으로 돌아갈 때 현재 페이지/검색 조건 유지용 URL -->
+    <c:url var="listUrl" value="/recipe/list">
+        <c:param name="pageNum" value="${cri.pageNum}" />
+        <c:param name="amount" value="${cri.amount}" />
+        <c:param name="sort" value="${cri.sort}" />
+        <c:param name="type" value="${cri.type}" />
+        <c:param name="keyword" value="${cri.keyword}" />
+        <c:param name="category" value="${cri.category}" />
+        <c:param name="tag" value="${cri.tag}" />
+    </c:url>
+
     <h1>레시피 상세 정보</h1>
     
     <div>
@@ -25,27 +36,27 @@
     <div style="white-space: pre-wrap;">${recipe.ingredients}</div>
     
     <hr>
-	<h3>영양 정보 (총 합계)</h3>
-	<table border="1">
-	    <tr>
-	        <th>칼로리</th>
-	        <td><fmt:formatNumber value="${nutrition.calories}" pattern="#,##0.0"/> kcal</td>
-	    </tr>
-	    <tr>
-	        <th>탄수화물</th>
-	        <td><fmt:formatNumber value="${nutrition.carbohydrate}" pattern="#,##0.0"/> g</td>
-	    </tr>
-	    <tr>
-	        <th>단백질</th>
-	        <td><fmt:formatNumber value="${nutrition.protein}" pattern="#,##0.0"/> g</td>
-	    </tr>
-	    <tr>
-	        <th>지방</th>
-	        <td><fmt:formatNumber value="${nutrition.fat}" pattern="#,##0.0"/> g</td>
-	    </tr>
-	</table>
-	
-	<hr>
+    <h3>영양 정보 (총 합계)</h3>
+    <table border="1">
+        <tr>
+            <th>칼로리</th>
+            <td><fmt:formatNumber value="${nutrition.calories}" pattern="#,##0.0"/> kcal</td>
+        </tr>
+        <tr>
+            <th>탄수화물</th>
+            <td><fmt:formatNumber value="${nutrition.carbohydrate}" pattern="#,##0.0"/> g</td>
+        </tr>
+        <tr>
+            <th>단백질</th>
+            <td><fmt:formatNumber value="${nutrition.protein}" pattern="#,##0.0"/> g</td>
+        </tr>
+        <tr>
+            <th>지방</th>
+            <td><fmt:formatNumber value="${nutrition.fat}" pattern="#,##0.0"/> g</td>
+        </tr>
+    </table>
+    
+    <hr>
     <h3>조리 과정</h3>
     <c:forEach items="${recipe.steps}" var="step">
         <div style="margin-top: 20px; border-bottom: 1px dotted #ccc; padding-bottom: 20px;">
@@ -112,12 +123,13 @@
             </form>
         </c:if>
         <c:if test="${not empty member and member.userid != recipe.writer}">
-	        <a href="/report/register?bno=${recipe.bno}&reported_id=${recipe.writer}">
-	            <button style="color: red;">신고</button>
-	        </a>
-	    </c:if>
+            <a href="/report/register?bno=${recipe.bno}&reported_id=${recipe.writer}">
+                <button style="color: red;">신고</button>
+            </a>
+        </c:if>
         
-        <button type="button" onclick="location.href='/recipe/list'">전체 목록으로</button>
+        <!-- ★ 여기서 listUrl 사용 -->
+        <button type="button" onclick="location.href='${listUrl}'">목록으로</button>
     </div>
     
     <hr>

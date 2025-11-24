@@ -18,7 +18,6 @@
         <a href="/member/following?userid=${pageOwner.userid}">팔로잉 ${followingCount}</a>
     </div>
 
-    <%-- 로그인했고, 내 페이지가 아닐 경우에만 팔로우 버튼 표시 --%>
     <c:if test="${not empty member and member.userid != pageOwner.userid}">
         <button id="followBtn" data-writer="${pageOwner.userid}">
             <c:choose>
@@ -49,7 +48,12 @@
                         </c:if>
                     </td>
                     <td>
-                        <a href="/recipe/get?bno=${recipe.bno}">
+                        <c:url var="readUrl" value="/recipe/get">
+                            <c:param name="bno" value="${recipe.bno}" />
+                            <c:param name="pageNum" value="${cri.pageNum}" />
+                            <c:param name="amount" value="${cri.amount}" />
+                        </c:url>
+                        <a href="${readUrl}">
                             <c:out value="${recipe.title}"/>
                         </a>
                     </td>
@@ -58,6 +62,50 @@
             </c:forEach>
         </tbody>
     </table>
+
+    <!-- ✅ 페이징 영역 (공백 없이 c:url로 구성) -->
+    <c:if test="${not empty pageMaker}">
+        <div style="margin-top: 20px; text-align: center;">
+
+            <!-- 이전 -->
+            <c:if test="${pageMaker.prev}">
+                <c:url var="prevUrl" value="/member/userpage">
+                    <c:param name="userid" value="${pageOwner.userid}" />
+                    <c:param name="pageNum" value="${pageMaker.startPage - 1}" />
+                    <c:param name="amount" value="${cri.amount}" />
+                </c:url>
+                <a href="${prevUrl}">이전</a>
+            </c:if>
+
+            <!-- 페이지 번호 -->
+            <c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+                <c:choose>
+                    <c:when test="${cri.pageNum == num}">
+                        <strong>[${num}]</strong>
+                    </c:when>
+                    <c:otherwise>
+                        <c:url var="pageUrl" value="/member/userpage">
+                            <c:param name="userid" value="${pageOwner.userid}" />
+                            <c:param name="pageNum" value="${num}" />
+                            <c:param name="amount" value="${cri.amount}" />
+                        </c:url>
+                        <a href="${pageUrl}">[${num}]</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <!-- 다음 -->
+            <c:if test="${pageMaker.next}">
+                <c:url var="nextUrl" value="/member/userpage">
+                    <c:param name="userid" value="${pageOwner.userid}" />
+                    <c:param name="pageNum" value="${pageMaker.endPage + 1}" />
+                    <c:param name="amount" value="${cri.amount}" />
+                </c:url>
+                <a href="${nextUrl}">다음</a>
+            </c:if>
+
+        </div>
+    </c:if>
 
     <br>
     <button onclick="location.href='/recipe/list'">전체 목록으로</button>
@@ -72,21 +120,16 @@ $(document).ready(function() {
             type: 'post',
             url: '/follow/' + followingId,
             success: function(result) {
-                if(result.isFollowing) {
-                    $('#followBtn').text('팔로잉');
-                } else {
-                    $('#followBtn').text('팔로우');
-                }
-                // 실시간으로 숫자도 변경해주면 좋음 (추후 개선)
+                if(result.isFollowing) $('#followBtn').text('팔로잉');
+                else $('#followBtn').text('팔로우');
             },
             error: function(xhr) {
-                if(xhr.status == 401) {
-                    alert("로그인이 필요합니다.");
-                }
+                if(xhr.status == 401) alert("로그인이 필요합니다.");
             }
         });
     });
 });
 </script>
+
 </body>
 </html>
