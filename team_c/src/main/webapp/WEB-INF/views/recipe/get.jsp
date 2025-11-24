@@ -191,8 +191,8 @@
 
     <form action="/comment/register" method="post" class="tc-comment-form">
         <input type="hidden" name="bno" value="${recipe.bno}">
-        <input type="hidden" name="replyer" value="${member.userid}">
-        <textarea name="reply" rows="3" class="tc-textarea"
+        <input type="hidden" name="userid" value="${member.userid}">
+        <textarea name="content" rows="3" class="tc-textarea"
                   placeholder="댓글을 입력하세요"
                   <c:if test="${empty member}">disabled</c:if> ></textarea>
         <button type="submit" class="tc-btn tc-btn-sm"
@@ -202,14 +202,27 @@
     <div class="tc-comment-list">
         <ul>
             <c:forEach items="${commentList}" var="comment">
-                <li class="tc-comment-item">
-                    <a class="tc-link" href="/member/userpage?userid=${comment.replyer}">
-                        <strong><c:out value="${comment.replyer}"/></strong>
+                <li class="tc-comment-item" data-comment-id="${comment.comment_id}">
+                    
+                    <a class="tc-link" href="/member/userpage?userid=${comment.userid}">
+                        <strong><c:out value="${comment.userid}"/></strong>
                     </a>
-                    <span class="tc-comment-text">: <c:out value="${comment.reply}"/></span>
+
+                    <span class="tc-comment-text">: <c:out value="${comment.content}"/></span>
+
                     <span class="tc-comment-date">
-                        (<fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${comment.replyDate}"/>)
+                        (<fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${comment.regdate}"/>)
                     </span>
+
+                    <!-- ✅ 댓글 삭제 버튼 (본인 or 레시피 작성자) -->
+                    <c:if test="${not empty member and (member.userid == comment.userid or member.userid == recipe.writer)}">
+                        <button type="button"
+                                class="tc-btn tc-btn-xs tc-btn-ghost comment-delete-btn"
+                                data-comment-id="${comment.comment_id}">
+                            삭제
+                        </button>
+                    </c:if>
+
                 </li>
             </c:forEach>
         </ul>
@@ -277,6 +290,31 @@ $(document).ready(function() {
             }
         });
     });
+
+    // ✅ 댓글 삭제 AJAX
+    $(document).on('click', '.comment-delete-btn', function() {
+        if(!confirm("댓글을 삭제할까요?")) return;
+
+        var commentId = $(this).data('comment-id');
+        var $li = $(this).closest('li');
+
+        $.ajax({
+            type: 'post',
+            url: '/comment/remove',
+            data: { comment_id: commentId },
+            success: function(res) {
+                if(res.success){
+                    $li.remove();
+                } else {
+                    alert("삭제 실패. 다시 시도해줘.");
+                }
+            },
+            error: function() {
+                alert("서버 오류로 삭제 실패.");
+            }
+        });
+    });
+
 });
 </script>
 

@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
+
     private CommentMapper mapper;
 
     @Override
@@ -21,5 +22,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentVO> getList(Long bno) {
         return mapper.getListByBno(bno);
+    }
+
+    @Override
+    public boolean remove(Long comment_id) {
+        return mapper.remove(comment_id) == 1;
     }
 }

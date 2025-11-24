@@ -219,5 +219,9 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeMapper.getMyLikeList(cri, userid);
     }
     
+    @Override
+    public List<RecipeVO> findByIngredients(List<String> ingredientList) {
+        return recipeMapper.findByIngredients(ingredientList);
+    }    
     
 }

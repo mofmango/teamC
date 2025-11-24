@@ -41,6 +41,9 @@ public interface RecipeService {
 
     // [마이페이지] 좋아요 페이징
     public List<RecipeVO> getMyLikeList(Criteria cri, String userid);
+    
+    public List<RecipeVO> findByIngredients(List<String> ingredientList);
+    
 
     
 }

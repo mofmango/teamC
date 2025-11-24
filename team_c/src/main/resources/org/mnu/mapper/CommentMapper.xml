@@ -2,10 +2,11 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="org.mnu.mapper.CommentMapper">
 
-    <!-- 댓글 목록: 레시피 상세에서 호출 -->
-    <select id="getListByBno" resultType="org.mnu.domain.CommentVO">
+    <!-- 댓글 목록 -->
+    <select id="getListByBno" resultType="org.mnu.domain.CommentVO" parameterType="long">
         SELECT comment_id,
                bno,
                userid,
@@ -26,28 +27,27 @@
             comment_id,
             bno,
             userid,
-            content
+            content,
+            regdate
         ) VALUES (
             #{comment_id},
             #{bno},
-            #{userid},
-            #{content}
+            #{userid, jdbcType=VARCHAR},
+            #{content, jdbcType=VARCHAR},
+            SYSDATE
         )
     </insert>
 
-    <!-- 댓글 삭제 -->
-    <delete id="remove">
+    <!-- ✅ 댓글 단건 삭제 -->
+    <delete id="remove" parameterType="long">
         DELETE FROM TBL_COMMENT
         WHERE comment_id = #{comment_id}
     </delete>
-    <!-- 댓글 삭제
+
+    <!-- 게시글 삭제 시 댓글 일괄 삭제 -->
     <delete id="deleteByBno" parameterType="long">
         DELETE FROM TBL_COMMENT
         WHERE bno = #{bno}
     </delete>
- 	-->
- 	<delete id="deleteByBno">
-	    DELETE FROM TBL_COMMENT WHERE bno = #{bno}
-	</delete>
- 	
+
 </mapper>
