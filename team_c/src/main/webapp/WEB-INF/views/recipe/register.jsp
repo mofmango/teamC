@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,14 +20,14 @@
 
         <!-- ✅ 1인분 식비 -->
         <div>
-            <label>1인분 식비(원)</label>
-            <input type="number" name="cost" id="cost-input" min="0" step="1" placeholder="예: 5000">
+            <label>1인분 식비 (원)</label>
+            <input type="number" name="cost" min="0" placeholder="예: 4500">
         </div>
 
-        <!-- ✅ 소요 시간 -->
+        <!-- ✅ 소요시간 -->
         <div>
-            <label>소요 시간</label>
-            <input type="text" name="time_required" id="time-input" placeholder="예: 30분 / 1시간">
+            <label>소요시간</label>
+            <input type="text" name="time_required" placeholder="예: 15분 / 1시간">
         </div>
 
         <div>
@@ -43,7 +42,7 @@
             <label>재료 (한 줄에 하나씩 입력하세요. 예: 닭가슴살 100g)</label><br>
             <textarea name="ingredients" rows="8" cols="50"></textarea>
         </div>
-        
+
         <hr>
 
         <div id="steps-container">
@@ -95,9 +94,9 @@ $(document).ready(function() {
         var mainFileVal = mainFileInput.val();
         var tagsVal = tagsInput.val();
         var step1DescVal = step1DescInput.val();
-        
+
         if (titleVal.trim() !== '' && mainFileVal && tagsVal.trim() !== '' && step1DescVal.trim() !== '') {
-            registerBtn.prop('disabled', false); 
+            registerBtn.prop('disabled', false);
             warningBox.hide();
         } else {
             registerBtn.prop('disabled', true);

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
@@ -20,18 +19,14 @@
 
         <!-- ✅ 1인분 식비 -->
         <div>
-            <label>1인분 식비(원)</label>
-            <input type="number" name="cost" min="0" step="1"
-                   value="<c:out value='${recipe.cost}'/>"
-                   placeholder="예: 5000">
+            <label>1인분 식비 (원)</label>
+            <input type="number" name="cost" min="0" value="${recipe.cost}" placeholder="예: 4500">
         </div>
 
-        <!-- ✅ 소요 시간 -->
+        <!-- ✅ 소요시간 -->
         <div>
-            <label>소요 시간</label>
-            <input type="text" name="time_required"
-                   value="<c:out value='${recipe.time_required}'/>"
-                   placeholder="예: 30분 / 1시간">
+            <label>소요시간</label>
+            <input type="text" name="time_required" value="${recipe.time_required}" placeholder="예: 15분 / 1시간">
         </div>
 
         <div>
@@ -51,7 +46,7 @@
             <label>태그</label>
             <input type="text" name="tags" placeholder="태그를 쉼표(,)로 구분하세요" value="${tagString}">
         </div>
-        
+
         <div>
             <label>재료 (한 줄에 하나씩 입력하세요. 예: 닭가슴살 100g)</label><br>
             <textarea name="ingredients" rows="8" cols="50">${recipe.ingredients}</textarea>
