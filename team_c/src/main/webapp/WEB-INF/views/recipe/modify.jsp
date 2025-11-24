@@ -17,6 +17,23 @@
             <label>제목</label>
             <input type="text" name="title" value="<c:out value='${recipe.title}'/>">
         </div>
+
+        <!-- ✅ 1인분 식비 -->
+        <div>
+            <label>1인분 식비(원)</label>
+            <input type="number" name="cost" min="0" step="1"
+                   value="<c:out value='${recipe.cost}'/>"
+                   placeholder="예: 5000">
+        </div>
+
+        <!-- ✅ 소요 시간 -->
+        <div>
+            <label>소요 시간</label>
+            <input type="text" name="time_required"
+                   value="<c:out value='${recipe.time_required}'/>"
+                   placeholder="예: 30분 / 1시간">
+        </div>
+
         <div>
             <label>기존 대표 사진</label>
             <div>

@@ -22,7 +22,7 @@ public interface RecipeMapper {
     public int update(RecipeVO recipe);
     
     // 레시피 검색 
-    public List<RecipeVO> getList(String keyword);
+    //public List<RecipeVO> getList(String keyword);
     
     
     public List<RecipeVO> getListByWriter(String writer);

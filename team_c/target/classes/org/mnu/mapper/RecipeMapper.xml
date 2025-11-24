@@ -62,20 +62,23 @@
         WHERE rn BETWEEN #{startRow} AND #{endRow}
     </select>
 
-    <insert id="create">
-	    <selectKey keyProperty="bno" order="BEFORE" resultType="long">
-	        SELECT seq_recipe.nextval FROM DUAL
-	    </selectKey>
-	    INSERT INTO TBL_RECIPE (bno, title, writer, image_path, ingredients)
-	    VALUES (
-	        #{bno}, 
-	        #{title}, 
-	        #{writer},
-	        #{image_path, jdbcType=VARCHAR},
-	        #{ingredients, jdbcType=CLOB}
-	    )
-	</insert>
-	
+<insert id="create">
+    <selectKey keyProperty="bno" order="BEFORE" resultType="long">
+        SELECT seq_recipe.nextval FROM DUAL
+    </selectKey>
+    INSERT INTO TBL_RECIPE (bno, title, writer, image_path, ingredients, cost, time_required)
+    VALUES (
+        #{bno}, 
+        #{title}, 
+        #{writer},
+        #{image_path, jdbcType=VARCHAR},
+        #{ingredients, jdbcType=CLOB},
+        #{cost, jdbcType=NUMERIC},
+        #{time_required, jdbcType=VARCHAR}
+    )
+</insert>
+
+
 
     <select id="read" resultType="org.mnu.domain.RecipeVO">
         SELECT r.*, m.username as writerName
@@ -91,14 +94,17 @@
         WHERE bno = #{bno}
     </update>
      -->
-    <update id="update">
-	    UPDATE TBL_RECIPE
-	    SET title = #{title},
-	        updatedate = sysdate,
-	        image_path = #{image_path, jdbcType=VARCHAR},
-	        ingredients = #{ingredients, jdbcType=CLOB}
-	    WHERE bno = #{bno}
-	</update>
+<update id="update">
+    UPDATE TBL_RECIPE
+    SET title = #{title},
+        updatedate = sysdate,
+        image_path = #{image_path, jdbcType=VARCHAR},
+        ingredients = #{ingredients, jdbcType=CLOB},
+        cost = #{cost, jdbcType=NUMERIC},
+        time_required = #{time_required, jdbcType=VARCHAR}
+    WHERE bno = #{bno}
+</update>
+	
     
     
     <delete id="delete">

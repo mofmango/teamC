@@ -78,6 +78,9 @@
                 <th>이미지</th>
                 <th>제목</th>
                 <th>작성자</th>
+                <!-- ✅ 추가 -->
+                <th>1인분 식비</th>
+                <th>소요시간</th>
                 <th>작성일</th>
             </tr>
         </thead>
@@ -107,6 +110,31 @@
                         </a>
                     </td>
                     <td><c:out value="${recipe.writerName}"/></td>
+
+                    <!-- ✅ 1인분 식비 표시 -->
+                    <td>
+                        <c:choose>
+                            <c:when test="${not empty recipe.cost}">
+                                <fmt:formatNumber value="${recipe.cost}" pattern="#,##0"/> 원
+                            </c:when>
+                            <c:otherwise>
+                                정보 없음
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+
+                    <!-- ✅ 소요시간 표시 -->
+                    <td>
+                        <c:choose>
+                            <c:when test="${not empty recipe.time_required}">
+                                <c:out value="${recipe.time_required}"/>
+                            </c:when>
+                            <c:otherwise>
+                                정보 없음
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+
                     <td><fmt:formatDate pattern="yyyy-MM-dd" value="${recipe.regdate}"/></td>
                 </tr>
             </c:forEach>

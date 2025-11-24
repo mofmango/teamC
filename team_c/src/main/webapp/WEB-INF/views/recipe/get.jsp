@@ -31,6 +31,33 @@
         <label>제목</label>
         <input type="text" value="<c:out value='${recipe.title}'/>" readonly>
     </div>
+
+    <!-- ✅ 1인분 식비 표시 -->
+    <div>
+        <label>1인분 식비</label>
+        <c:choose>
+            <c:when test="${not empty recipe.cost}">
+                <fmt:formatNumber var="costFmt" value="${recipe.cost}" pattern="#,##0"/>
+                <input type="text" value="${costFmt} 원" readonly>
+            </c:when>
+            <c:otherwise>
+                <input type="text" value="정보 없음" readonly>
+            </c:otherwise>
+        </c:choose>
+    </div>
+
+    <!-- ✅ 소요시간 표시 -->
+    <div>
+        <label>소요시간</label>
+        <c:choose>
+            <c:when test="${not empty recipe.time_required}">
+                <input type="text" value="<c:out value='${recipe.time_required}'/>" readonly>
+            </c:when>
+            <c:otherwise>
+                <input type="text" value="정보 없음" readonly>
+            </c:otherwise>
+        </c:choose>
+    </div>
     
     <h3>재료</h3>
     <div style="white-space: pre-wrap;">${recipe.ingredients}</div>
