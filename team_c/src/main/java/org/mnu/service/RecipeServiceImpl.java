@@ -3,6 +3,7 @@ package org.mnu.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Objects;
 
 import org.mnu.domain.Criteria;
 import org.mnu.domain.RecipeVO;
@@ -12,9 +13,10 @@ import org.mnu.mapper.LikeMapper;
 import org.mnu.mapper.RecipeMapper;
 import org.mnu.mapper.RecipeStepMapper;
 import org.mnu.mapper.TagMapper;
+import org.mnu.mapper.IngredientMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.mnu.mapper.IngredientMapper;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
 
@@ -30,8 +32,7 @@ public class RecipeServiceImpl implements RecipeService {
     private BookmarkMapper bookmarkMapper;
     private RecipeStepMapper recipeStepMapper;
     private IngredientMapper ingredientMapper;
-    
-    
+
     @Transactional
     @Override
     public void register(RecipeVO recipe) {
@@ -132,13 +133,13 @@ public class RecipeServiceImpl implements RecipeService {
         log.info("getLikes by user: " + userid);
         return recipeMapper.getLikesByUser(userid);
     }
-    
+
     @Override
     public int getTotalCount(Criteria cri) {
         log.info("getTotalCount with criteria: " + cri);
         return recipeMapper.getTotalCount(cri);
     }
-    
+
     @Override
     public int countByWriter(String writer) {
         return recipeMapper.countByWriter(writer);
@@ -153,51 +154,49 @@ public class RecipeServiceImpl implements RecipeService {
     public int countLikesByUser(String userid) {
         return recipeMapper.countLikesByUser(userid);
     }
-    
-    /*
+
     @Override
     public List<RecipeVO> recommendByUserIngredients(String userid) {
-        List<String> ingredients = ingredientMapper.getListByUser(userid);
-        if (ingredients == null || ingredients.isEmpty()) {
-            return new java.util.ArrayList<>();
-        }
-        return recipeMapper.findByIngredients(ingredients);
-    }
-    */
-    @Override
-    public List<RecipeVO> recommendByUserIngredients(String userid) {
+
         // 사용자 냉장고 재료 목록 조회
         List<String> ingredients = ingredientMapper.getListByUser(userid);
-        // 아래 List<String> 기반 메서드를 재사용
+
+        log.info("[recommendByUserIngredients] userid = " + userid);
+        log.info("[recommendByUserIngredients] raw ingredients = " + ingredients);
+        log.info("[recommendByUserIngredients] raw size = " +
+                (ingredients != null ? ingredients.size() : 0));
+
         return recommendByUserIngredients(ingredients);
     }
 
     @Override
     public List<RecipeVO> recommendByUserIngredients(List<String> ingredientList) {
 
-        // 1) null/빈 리스트 방어
         if (ingredientList == null || ingredientList.isEmpty()) {
             log.info("[recommendByUserIngredients] ingredientList is empty");
             return Collections.emptyList();
         }
 
-        // 2) 공백/중복 제거
+        // ✅ 공백/# 제거 + 중복 제거
         List<String> filtered = ingredientList.stream()
-                .filter(s -> s != null)
-                .map(String::trim)
+                .filter(Objects::nonNull)
+                .map(s -> s.replace("#", "").trim())
                 .filter(s -> !s.isEmpty())
                 .distinct()
                 .collect(Collectors.toList());
 
+        log.info("[recommendByUserIngredients] filtered ingredients = " + filtered);
+
         if (filtered.isEmpty()) {
-            log.info("[recommendByUserIngredients] filtered ingredientList is empty");
+            log.info("[recommendByUserIngredients] filtered is empty");
             return Collections.emptyList();
         }
 
-        // 3) Mapper 호출 → TBL_RECIPE_TAG 에서 match_count 계산
         List<RecipeVO> result = recipeMapper.findByIngredients(filtered);
-        log.info("[recommendByUserIngredients] result size = " 
-                    + (result != null ? result.size() : 0));
+
+        log.info("[recommendByUserIngredients] result size = " +
+                (result != null ? result.size() : 0));
+
         return result;
     }
 
@@ -218,10 +217,37 @@ public class RecipeServiceImpl implements RecipeService {
         log.info("getMyLikeList : userid = " + userid + ", cri = " + cri);
         return recipeMapper.getMyLikeList(cri, userid);
     }
-    
+
     @Override
     public List<RecipeVO> findByIngredients(List<String> ingredientList) {
         return recipeMapper.findByIngredients(ingredientList);
-    }    
-    
+    }
+
+    // ======================================================
+    // 메인페이지용
+    // ======================================================
+
+    @Override
+    public RecipeVO getHeroRecipe() {
+        List<RecipeVO> list = getTopLikedList(1);
+        return (list != null && !list.isEmpty()) ? list.get(0) : null;
+    }
+
+    @Override
+    public List<RecipeVO> getTopLikedList(int limit) {
+        Criteria cri = new Criteria();
+        cri.setPageNum(1);
+        cri.setAmount(limit);
+        cri.setSort("likes");  // ✅ RecipeMapper.xml에서 likes일 때만 좋아요 정렬
+        return recipeMapper.getList(cri);
+    }
+
+    @Override
+    public List<RecipeVO> getRecentList(int limit) {
+        Criteria cri = new Criteria();
+        cri.setPageNum(1);
+        cri.setAmount(limit);
+        cri.setSort(null);     // ✅ 그 외는 기본 bno DESC(최신)
+        return recipeMapper.getList(cri);
+    }
 }
