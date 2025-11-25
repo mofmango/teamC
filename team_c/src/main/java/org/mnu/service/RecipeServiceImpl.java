@@ -157,18 +157,27 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<RecipeVO> recommendByUserIngredients(String userid) {
-
-        // 사용자 냉장고 재료 목록 조회
+        // 1) 사용자 냉장고 재료 목록 조회
         List<String> ingredients = ingredientMapper.getListByUser(userid);
-
         log.info("[recommendByUserIngredients] userid = " + userid);
         log.info("[recommendByUserIngredients] raw ingredients = " + ingredients);
 
-        log.info("[recommendByUserIngredients] ingredients from fridge = " + ingredients);
-        log.info("[recommendByUserIngredients] raw size = " +
-                (ingredients != null ? ingredients.size() : 0));
+        // 2) 기존 List<String> 버전 재사용 (태그 매칭 + 정렬)
+        List<RecipeVO> baseList = recommendByUserIngredients(ingredients);
 
-        return recommendByUserIngredients(ingredients);
+        if (baseList == null || baseList.isEmpty()) {
+            log.info("[recommendByUserIngredients] baseList is empty");
+            return Collections.emptyList();
+        }
+
+        // 3) 본인 레시피(writer == userid) 제외 + 최대 3개만
+        List<RecipeVO> filtered = baseList.stream()
+                .filter(r -> r.getWriter() != null && !r.getWriter().equals(userid))
+                .limit(3)
+                .collect(Collectors.toList());
+
+        log.info("[recommendByUserIngredients] filtered(result) size = " + filtered.size());
+        return filtered;
     }
 
     @Override

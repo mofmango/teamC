@@ -140,6 +140,7 @@
         SELECT COUNT(*) FROM TBL_LIKE WHERE userid = #{userid}
     </select>
 
+    <!-- ✅ 냉장고 재료 기반 추천: ingredients 컬럼 LIKE 매칭 -->
     <select id="findByIngredients" resultType="org.mnu.domain.RecipeVO">
         SELECT
             r.*,
@@ -150,17 +151,20 @@
             JOIN TBL_MEMBER m ON r.writer = m.userid
             JOIN (
                 SELECT
-                    rt.bno,
+                    r2.bno,
                     COUNT(*) AS match_count
                 FROM
-                    TBL_RECIPE_TAG rt
-                WHERE
-                    rt.tagName IN
-                    <foreach item="item" index="index" collection="ingredientList" open="(" separator="," close=")">
-                        #{item}
-                    </foreach>
+                    TBL_RECIPE r2
+                    JOIN (
+                        <!-- ingredientList를 UNION ALL 로 임시 테이블처럼 만듦 -->
+                        <foreach item="item" collection="ingredientList"
+                                 open="" separator="UNION ALL" close="">
+                            SELECT #{item} AS ing FROM DUAL
+                        </foreach>
+                    ) inglist
+                    ON r2.ingredients LIKE '%' || inglist.ing || '%'
                 GROUP BY
-                    rt.bno
+                    r2.bno
             ) v ON r.bno = v.bno
         ORDER BY
             v.match_count DESC,

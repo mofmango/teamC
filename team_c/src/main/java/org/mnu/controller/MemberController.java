@@ -67,6 +67,8 @@ public class MemberController {
         if (loginMember != null) {
             HttpSession session = request.getSession();
             session.setAttribute("member", loginMember);
+            log.info("[LOGIN] session id = " + session.getId());
+            log.info("[LOGIN] save member = " + loginMember);
             return "redirect:/";
         } else {
             rttr.addFlashAttribute("result", "login_fail");
