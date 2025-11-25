@@ -163,6 +163,8 @@ public class RecipeServiceImpl implements RecipeService {
 
         log.info("[recommendByUserIngredients] userid = " + userid);
         log.info("[recommendByUserIngredients] raw ingredients = " + ingredients);
+
+        log.info("[recommendByUserIngredients] ingredients from fridge = " + ingredients);
         log.info("[recommendByUserIngredients] raw size = " +
                 (ingredients != null ? ingredients.size() : 0));
 

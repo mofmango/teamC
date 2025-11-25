@@ -51,7 +51,7 @@ public class MemberController {
         service.join(member);
         
         rttr.addFlashAttribute("result", "join_success");
-        return "redirect:/recipe/list";
+        return "redirect:/";
     }
     
     @GetMapping("/login")
@@ -67,7 +67,7 @@ public class MemberController {
         if (loginMember != null) {
             HttpSession session = request.getSession();
             session.setAttribute("member", loginMember);
-            return "redirect:/recipe/list";
+            return "redirect:/";
         } else {
             rttr.addFlashAttribute("result", "login_fail");
             return "redirect:/member/login";
@@ -78,7 +78,7 @@ public class MemberController {
     public String logout(HttpSession session) {
         log.info("====== 로그아웃 처리 ======");
         session.invalidate();
-        return "redirect:/recipe/list";
+        return "redirect:/";
     }
     
     @GetMapping("/mypage")
