@@ -7,7 +7,7 @@
     헤더는 건드리지 않고, 본문(.tc-page-section)만 중앙 정렬합니다.
 --%>
 <style>
-    /* 1. Body는 전체 너비 사용 (헤더 깨짐 방지) */
+    /* 1. Body는 전체 너비 사용 */
     body.tc-main-page {
         display: block !important;
         width: 100% !important;
@@ -24,7 +24,7 @@
         box-sizing: border-box;
     }
 
-    /* 3. 태그 디자인 개선 (잘 보이게) */
+    /* 3. 태그 디자인 개선 */
     .tc-tag-list {
         display: flex;
         flex-wrap: wrap;
@@ -46,6 +46,18 @@
     .tc-tag:hover {
         background-color: #2563eb !important;
         transform: translateY(-2px);
+    }
+
+    /* 4. [추가] 작성자 링크 스타일 */
+    .writer-link {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 700;
+        transition: color 0.2s;
+    }
+    .writer-link:hover {
+        color: #3b82f6; /* 호버 시 파란색 */
+        text-decoration: underline;
     }
 </style>
 
@@ -91,7 +103,11 @@
                 </div>
 
                 <div class="tc-detail-meta-row">
-                    <span>작성자 <strong><c:out value="${recipe.writerName}"/></strong></span>
+                    <span>작성자 
+                        <a href="/member/userpage?userid=${recipe.writer}" class="writer-link">
+                            <c:out value="${recipe.writerName}"/>
+                        </a>
+                    </span>
                     
                     <c:if test="${not empty member and member.userid != recipe.writer}">
                         <button id="followBtn" class="tc-btn tc-btn-sm tc-btn-ghost" data-writer="${recipe.writer}" style="border:1px solid var(--border);">
