@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.mnu.mapper.FreeReplyMapper">
+
+    <!-- 댓글 등록 -->
+    <insert id="insert" parameterType="org.mnu.domain.FreeReplyVO">
+        INSERT INTO TBL_FREE_REPLY (
+            rno,
+            bno,
+            reply,
+            replyer
+        ) VALUES (
+            SEQ_FREE_REPLY.NEXTVAL,
+            #{bno},
+            #{reply},
+            #{replyer}
+        )
+    </insert>
+
+    <!-- 댓글 한 건 조회 -->
+    <select id="read" parameterType="long" resultType="org.mnu.domain.FreeReplyVO">
+        SELECT
+            rno,
+            bno,
+            reply,
+            replyer,
+            replydate AS replyDate
+        FROM TBL_FREE_REPLY
+        WHERE rno = #{rno}
+    </select>
+
+    <!-- 댓글 삭제 -->
+    <delete id="delete" parameterType="long">
+        DELETE FROM TBL_FREE_REPLY
+        WHERE rno = #{rno}
+    </delete>
+
+    <!-- 게시글(bno) 기준 댓글 목록 -->
+    <select id="getList" parameterType="long" resultType="org.mnu.domain.FreeReplyVO">
+        SELECT
+            rno,
+            bno,
+            reply,
+            replyer,
+            replydate AS replyDate
+        FROM TBL_FREE_REPLY
+        WHERE bno = #{bno}
+        ORDER BY rno DESC
+    </select>
+
+</mapper>
