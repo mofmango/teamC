@@ -14,6 +14,8 @@
     .tc-btn-primary { background: #3b82f6; }
     .tc-btn-danger { background: #ef4444; font-size: 12px; padding: 4px 10px; }
     
+	.tc-fridge-add-btn {min-width: 72px; height: 44px; padding: 0 18px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; background: #f9fafb; color: #111827; border: none;}
+    
     #ingredient-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
     #ingredient-list li { background: #252830; color: #e8eaf0; padding: 8px 16px; border-radius: 20px; display: flex; align-items: center; gap: 10px; border: 1px solid #2b2f37; }
 </style>
@@ -34,7 +36,7 @@
         <h4 style="color:white; margin:0 0 12px 0;">재료 추가</h4>
         <div style="display:flex; gap:10px;">
             <input type="text" id="ingredient-name" class="tc-input" placeholder="재료 이름 (예: 계란)">
-            <button id="add-btn" class="tc-btn tc-btn-primary">추가</button>
+			<button id="add-btn" class="tc-btn tc-fridge-add-btn">추가</button>
         </div>
     </div>
 

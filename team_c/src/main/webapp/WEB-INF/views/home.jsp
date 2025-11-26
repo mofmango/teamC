@@ -207,11 +207,19 @@
                 <ul class="tc-free-list">
                     <c:forEach items="${recentFreeList}" var="f">
                         <li class="tc-free-item">
+                            <!-- 제목 -->
                             <a href="${ctx}/free/get?bno=${f.bno}" class="tc-link">
-                                <strong><c:out value="${f.title}"/></strong>
+                                <strong class="tc-free-title">
+                                    <c:out value="${f.title}"/>
+                                </strong>
                             </a>
+                            <!-- 작성자 + 날짜 -->
                             <span class="tc-free-meta">
                                 · <c:out value="${f.writer}"/>
+                                <c:if test="${not empty f.regdate}">
+                                    &nbsp;|&nbsp;
+                                    <fmt:formatDate value="${f.regdate}" pattern="yyyy-MM-dd"/>
+                                </c:if>
                             </span>
                         </li>
                     </c:forEach>

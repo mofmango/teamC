@@ -43,10 +43,6 @@
             <a href="/member/mypage" class="tc-btn tc-btn-outline">마이페이지</a>
             <a href="/member/logout" class="tc-btn tc-btn-outline">로그아웃</a>
         </c:if>
-        <c:if test="${empty member}">
-            <a href="/member/login" class="tc-btn tc-btn-primary">로그인</a>
-            <a href="/member/join" class="tc-btn tc-btn-outline">회원가입</a>
-        </c:if>
     </div>
 
     <div class="tc-page-head">

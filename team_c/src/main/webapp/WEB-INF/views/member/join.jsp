@@ -1,13 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%-- Context Path 변수 설정 --%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
-<%-- 
-    [수정 1] CSS 직접 연결 
-    경로는 프로젝트 구조에 맞게 확인해주세요 (예: /resources/css/auth.css) 
---%>
+
 <link rel="stylesheet" href="${ctx}/resources/css/auth.css">
 
 <c:set var="bodyClass" value="tc-main-page tc-auth-page"/>
@@ -20,7 +16,7 @@
 
         <h1 class="tc-auth-title">회원가입</h1>
         <p class="tc-auth-sub">
-            TEAM_C 레시피 플랫폼의 회원이 되어 다양한 레시피를 공유해 보세요.
+            TEAM_C 레시피 플랫폼 회원가
         </p>
 
         <c:if test="${not empty msg}">
@@ -55,11 +51,6 @@
                        placeholder="비밀번호를 입력하세요" required/>
             </div>
 
-            <div class="tc-auth-field">
-                <label class="tc-auth-label" for="userpwConfirm">비밀번호 확인</label>
-                <input class="tc-auth-input" type="password" id="userpwConfirm" name="userpwConfirm"
-                       placeholder="비밀번호를 다시 입력하세요" required/>
-            </div>
 
             <button type="submit" class="tc-btn tc-btn-primary tc-auth-submit">
                 회원가입
