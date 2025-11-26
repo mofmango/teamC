@@ -59,6 +59,21 @@
         color: #3b82f6; /* 호버 시 파란색 */
         text-decoration: underline;
     }
+
+    /* 5. [추가] 자유게시판 댓글 스타일 (recipe.css에 없다면 추가 필요) */
+    .tc-reply-section { margin-top: 50px; }
+    .tc-reply-head { font-size: 18px; font-weight: 700; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+    .tc-reply-input-box { background: #252830; border: 1px solid #2b2f37; border-radius: 12px; padding: 20px; margin-bottom: 30px; }
+    .tc-reply-textarea { width: 100%; background: transparent; border: none; color: #e8eaf0; resize: none; outline: none; min-height: 60px; font-size: 14px; }
+    .tc-reply-btn-area { text-align: right; margin-top: 10px; }
+    
+    .tc-reply-list { list-style: none; padding: 0; }
+    .tc-reply-item { background: #1b1d22; border-bottom: 1px solid #2b2f37; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .tc-reply-item:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+    .tc-reply-item:last-child { border-bottom: none; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+    .tc-reply-writer { font-weight: 700; color: white; font-size: 14px; }
+    .tc-reply-date { font-size: 12px; color: #71717a; margin-left: 8px; }
+    .tc-reply-content { color: #d4d4d8; font-size: 14px; line-height: 1.5; }
 </style>
 
 <c:set var="extraCss" value="recipe.css"/>
@@ -220,48 +235,52 @@
         </c:forEach>
     </div>
 
-    <h2 class="tc-page-title" style="font-size: 22px; margin-bottom:20px;">댓글</h2>
-    
-    <div class="tc-comment-input-box">
-        <form action="/comment/register" method="post">
-            <input type="hidden" name="bno" value="${recipe.bno}">
-            <input type="hidden" name="userid" value="${member.userid}">
-            
-            <div style="display:flex; gap:12px; align-items:flex-start;">
-                <textarea name="content" rows="2" class="tc-textarea"
-                          placeholder="레시피에 대한 의견을 남겨주세요."
-                          <c:if test="${empty member}">disabled</c:if>></textarea>
-                <button type="submit" class="tc-btn tc-btn-primary" style="height:48px;"
-                        <c:if test="${empty member}">disabled</c:if>>등록</button>
-            </div>
-        </form>
-    </div>
+    <%-- 
+        [수정] 자유게시판과 동일한 댓글 디자인 적용
+        클래스명을 tc-reply-* 로 변경하고 구조를 통일했습니다.
+    --%>
+    <div class="tc-reply-section">
+        <div class="tc-reply-head">💬 댓글</div>
 
-    <ul class="tc-comment-list">
-        <c:forEach items="${commentList}" var="comment">
-            <li class="tc-comment-item">
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <a href="/member/userpage?userid=${comment.userid}" style="color:var(--text); font-weight:700; text-decoration:none;">
-                        <c:out value="${comment.userid}"/>
-                    </a>
-                    <span style="font-size:12px; color:var(--muted);">
-                        <fmt:formatDate pattern="yyyy.MM.dd HH:mm" value="${comment.regdate}"/>
-                    </span>
-                </div>
-                <div style="font-size:15px; line-height:1.5; color:var(--text); margin-bottom:4px;">
-                    <c:out value="${comment.content}"/>
-                </div>
+        <div class="tc-reply-input-box">
+            <form id="commentForm" action="/comment/register" method="post">
+                <input type="hidden" name="bno" value="${recipe.bno}">
+                <input type="hidden" name="userid" value="${member.userid}">
                 
-                <c:if test="${not empty member and (member.userid == comment.userid or member.userid == recipe.writer)}">
-                    <div style="text-align:right;">
-                        <button type="button" class="tc-btn-ghost comment-delete-btn"
-                                data-comment-id="${comment.comment_id}" 
-                                style="color:var(--danger); font-size:12px; padding:4px 8px;">삭제</button>
+                <textarea name="content" id="replyContent" class="tc-reply-textarea" placeholder="레시피에 대한 의견을 남겨주세요." 
+                    <c:if test="${empty member}">disabled</c:if>></textarea>
+                
+                <div class="tc-reply-btn-area">
+                    <button type="submit" id="replyAddBtn" class="tc-btn tc-btn-primary tc-btn-sm"
+                        <c:if test="${empty member}">disabled</c:if>>등록</button>
+                </div>
+            </form>
+        </div>
+
+        <ul class="tc-reply-list">
+            <c:forEach items="${commentList}" var="comment">
+                <li class="tc-reply-item" data-comment-id="${comment.comment_id}">
+                    <div style="display:flex; justify-content:space-between;">
+                        <div>
+                            <a href="/member/userpage?userid=${comment.userid}" class="writer-link tc-reply-writer" style="font-size:14px;">
+                                <c:out value="${comment.userid}"/>
+                            </a>
+                            <span class="tc-reply-date">
+                                <fmt:formatDate pattern="yyyy.MM.dd HH:mm" value="${comment.regdate}"/>
+                            </span>
+                        </div>
+                        
+                        <c:if test="${not empty member and (member.userid == comment.userid or member.userid == recipe.writer)}">
+                            <button class="tc-btn tc-btn-danger tc-btn-sm removeReplyBtn" style="padding:2px 8px; font-size:11px; background:none; border:none; cursor:pointer;">삭제</button>
+                        </c:if>
                     </div>
-                </c:if>
-            </li>
-        </c:forEach>
-    </ul>
+                    <div class="tc-reply-content">
+                        <c:out value="${comment.content}"/>
+                    </div>
+                </li>
+            </c:forEach>
+        </ul>
+    </div>
 
 </section>
 
@@ -322,11 +341,19 @@ $(document).ready(function() {
         });
     });
 
+    // [수정] 댓글 등록 (AJAX 아님, Form submit 방식 유지하되 ID 변경 대응)
+    // 기존 코드가 form submit 방식이었으므로 그대로 유지합니다. 
+    // 만약 AJAX로 바꾸고 싶다면 free/get.jsp 처럼 변경해야 합니다.
+    // 여기서는 디자인 클래스만 변경했으므로 기존 로직 유지.
+
     // 댓글 삭제
-    $(document).on('click', '.comment-delete-btn', function() {
+    $(document).on('click', '.removeReplyBtn', function() {
         if(!confirm("댓글을 삭제하시겠습니까?")) return;
-        var commentId = $(this).data('comment-id');
+        
+        // 버튼의 부모 li 요소에서 data-comment-id 가져오기
+        var commentId = $(this).closest('li').data('comment-id');
         var $li = $(this).closest('li');
+        
         $.ajax({
             type: 'post',
             url: '/comment/remove',
