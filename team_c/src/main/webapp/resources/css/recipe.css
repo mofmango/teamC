@@ -1,0 +1,455 @@
+@charset "UTF-8";
+
+/* =========================================
+   TEAM_C Design System (Dark Theme)
+   ========================================= */
+
+:root {
+  --bg:      #141518;
+  --panel:   #1b1d22;
+  --panel-2: #252830; /* 기존 패널색 */
+  --panel-3: #3a3f4b; /* [추가] 더 밝은 패널색 (태그용) */
+  --border:  #2b2f37;
+  --text:    #e8eaf0;
+  --muted:   #9ca3af;
+  --accent:  #3b82f6; /* 파란색 포인트 */
+  --danger:  #ef4444;
+}
+
+body.tc-main-page {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center; /* [핵심 수정] 가로축 중앙 정렬 추가 */
+}
+
+/* 레이아웃 래퍼 */
+.tc-page-section {
+  width: 100%;
+  max-width: 960px;
+  margin: 40px auto; /* 상하 40px, 좌우 자동(중앙) */
+  padding: 0 20px;
+  box-sizing: border-box;
+  flex: 1; /* 푸터를 바닥으로 밀어냄 */
+}
+
+/* =========================================
+   헤더 & 페이지 타이틀
+   ========================================= */
+.tc-page-head {
+  margin-bottom: 30px;
+}
+.tc-page-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #fff;
+}
+.tc-page-sub {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* =========================================
+   [추가] 로그인 / 회원가입 페이지 전용 스타일
+   ========================================= */
+.tc-auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    padding: 40px 20px;
+    width: 100%; /* 전체 너비 사용 */
+}
+
+.tc-auth-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.tc-auth-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.tc-auth-sub {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 36px;
+    line-height: 1.5;
+}
+
+.tc-auth-card .tc-form {
+    gap: 20px;
+    text-align: left;
+}
+
+.tc-auth-footer {
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--muted);
+}
+.tc-auth-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 6px;
+}
+.tc-auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   상세 페이지 레이아웃 (Grid)
+   ========================================= */
+.tc-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+@media (max-width: 768px) {
+  .tc-detail-layout { grid-template-columns: 1fr; }
+}
+
+.tc-detail-media {
+  background: var(--panel);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tc-detail-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tc-detail-media-empty {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.tc-detail-main {
+  background: var(--panel);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tc-detail-title-row {
+  margin-bottom: 20px;
+}
+.tc-detail-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+.tc-detail-badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 8px;
+  background: var(--panel-2);
+  border-radius: 6px;
+  color: var(--muted);
+}
+
+.tc-detail-meta-row {
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  align-items: center;
+}
+.tc-detail-meta-row strong {
+  color: var(--text);
+}
+
+.tc-divider {
+  height: 1px;
+  background: var(--border);
+  border: none;
+  margin: 24px 0;
+}
+
+.tc-spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.tc-spec-item .label {
+  font-size: 13px;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 4px;
+}
+.tc-spec-item .value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* =========================================
+   [수정] 태그 스타일 가시성 개선
+   ========================================= */
+.tc-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* 간격 약간 증가 */
+  margin-bottom: 24px;
+}
+.tc-tag {
+  font-size: 14px; /* 글자 크기 증가 */
+  color: var(--text); /* 글자색 밝게 */
+  background: var(--panel-3); /* [변경] 더 밝은 배경색 적용 */
+  padding: 8px 14px; /* 패딩 증가 */
+  border-radius: 20px;
+  text-decoration: none;
+  transition: 0.2s;
+  border: 1px solid var(--border); /* [추가] 테두리 추가로 구분감 부여 */
+  font-weight: 500;
+}
+.tc-tag:hover {
+  background: var(--accent); /* 호버 시 포인트 컬러 배경 */
+  color: #fff; /* 호버 시 흰색 글자 */
+  border-color: var(--accent);
+}
+
+/* =========================================
+   버튼 그룹 & 공통 박스 스타일
+   ========================================= */
+.tc-action-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tc-box-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+@media (max-width: 768px) { .tc-box-grid { grid-template-columns: 1fr; } }
+
+.tc-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.tc-box-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+.tc-box-content {
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+
+.tc-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tc-table th, .tc-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.tc-table th { text-align: left; color: var(--muted); font-weight: 500; }
+.tc-table td { text-align: right; color: var(--text); }
+.tc-table tr:last-child th, .tc-table tr:last-child td { border-bottom: none; }
+
+/* =========================================
+   Step & Comment 스타일
+   ========================================= */
+.tc-step-item {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 24px;
+}
+@media (max-width: 600px) { .tc-step-item { flex-direction: column; } }
+
+.tc-step-content { flex: 1; }
+.tc-step-head { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+.tc-step-desc { font-size: 15px; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
+
+.tc-step-img {
+  width: 200px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #000;
+}
+.tc-step-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.tc-comment-input-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.tc-textarea {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: #fff;
+  padding: 12px;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+.tc-textarea:focus { border-color: var(--accent); }
+
+.tc-comment-list { list-style: none; padding: 0; }
+.tc-comment-item {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 16px;
+}
+.tc-comment-item:first-child { border-top-left-radius: 16px; border-top-right-radius: 16px; }
+.tc-comment-item:last-child { border-bottom: none; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; }
+
+/* =========================================
+   폼 & 버튼 스타일
+   ========================================= */
+.tc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tc-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tc-form-row.inline {
+  flex-direction: row;
+  gap: 16px;
+}
+.tc-form-row.inline > .tc-form-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tc-form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.tc-form-input,
+.tc-form-textarea,
+.tc-form-select {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 14px;
+  padding: 11px 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+.tc-form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.tc-form-input:focus,
+.tc-form-textarea:focus {
+  border-color: var(--accent);
+  background: #252830;
+}
+
+.tc-form-file input[type=file] {
+  font-size: 13px;
+  color: var(--muted);
+}
+.tc-form-file input::file-selector-button {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.tc-form-help {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.tc-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.tc-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.tc-btn-primary { background: var(--accent); color: white; }
+.tc-btn-primary:hover { filter: brightness(1.1); }
+
+.tc-btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.tc-btn-outline:hover { background: var(--panel-2); border-color: var(--muted); }
+.tc-btn-outline.active { border-color: var(--accent); color: var(--accent); background: rgba(59, 130, 246, 0.1); }
+
+.tc-btn-ghost { background: transparent; color: var(--muted); padding: 8px 12px; }
+.tc-btn-ghost:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+.tc-btn-sm { padding: 6px 12px; font-size: 13px; }

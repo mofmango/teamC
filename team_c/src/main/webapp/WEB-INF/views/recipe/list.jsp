@@ -13,8 +13,8 @@
 <link rel="stylesheet" href="${cp}/resources/css/main.css">
 <!-- 레시피 목록 전용 스타일 -->
 <link rel="stylesheet" href="${cp}/resources/css/recipe_list.css">
+<link rel="stylesheet" href="${cp}/resources/css/recipe.css">
 
-<!-- ✅ 레시피 목록 제목 색상 강제 오버라이드 -->
 <style>
     /* 상단 "레시피 목록" 제목 흰색으로 */
     .tc-hero .tc-page-title {
