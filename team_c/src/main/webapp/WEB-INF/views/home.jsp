@@ -2,20 +2,54 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<c:set var="extraCss" value="home.css"/><!-- 필요 없으면 나중에 제거해도 됨 -->
+<c:set var="extraCss" value="home.css"/>
 <c:set var="bodyClass" value="tc-main-page"/>
 <c:set var="pageTitle" value="메인"/>
 <jsp:include page="/WEB-INF/views/includes/header.jsp"/>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
-<!-- ============================= -->
-<!-- 히어로 영역 -->
-<!-- ============================= -->
+<%-- [수정] 자유게시판 제목 가시성 확보를 위한 스타일 추가 --%>
+<style>
+    /* 자유게시판 아이템 레이아웃 수정 */
+    .tc-free-item {
+        display: flex !important;
+        align-items: center !important; /* baseline 대신 center로 변경 */
+        padding: 14px 16px !important;
+        gap: 10px;
+    }
+    
+    /* 제목 링크 영역 */
+    .tc-link {
+        flex: 1; /* 남은 공간 차지 */
+        min-width: 0; /* flex 자식의 텍스트 말줄임 필수 속성 */
+        display: block;
+    }
+    
+    /* 제목 텍스트 스타일 */
+    .tc-free-title {
+        display: block;
+        color: #e8eaf0;
+        font-size: 15px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0; /* 마진 제거 */
+    }
+    
+    /* 메타 정보 (작성자, 날짜) */
+    .tc-free-meta {
+        flex-shrink: 0; /* 줄어들지 않게 고정 */
+        font-size: 13px;
+        color: #9ca3af;
+        white-space: nowrap;
+    }
+</style>
+
 <section class="tc-hero">
     <div class="tc-hero-inner">
 
-        <!-- 왼쪽 : 타이틀 + 검색 -->
         <div class="tc-hero-left">
             <h1 class="tc-hero-title">TEAM_C Recipe Platform</h1>
             <p class="tc-hero-sub">냉장고 속 재료로 오늘의 레시피를 추천받아보세요.</p>
@@ -41,7 +75,6 @@
             </c:if>
         </div>
 
-        <!-- 오른쪽 : 대표 레시피 카드 -->
         <div class="tc-hero-right">
             <div class="tc-card tc-card-hero">
                 <c:choose>
@@ -83,9 +116,6 @@
     </div>
 </section>
 
-<!-- ==================================== -->
-<!-- 내 냉장고 재료 기반 추천 (최대 3개 + 캐러셀) -->
-<!-- ==================================== -->
 <section class="tc-section">
     <div class="tc-section-head">
         <div>
@@ -148,9 +178,6 @@
     </c:choose>
 </section>
 
-<!-- ======================= -->
-<!-- 최근 올라온 레시피 섹션 -->
-<!-- ======================= -->
 <section class="tc-section">
     <div class="tc-section-head">
         <h2 class="tc-section-title">최근 올라온 레시피</h2>
@@ -189,9 +216,6 @@
     </c:choose>
 </section>
 
-<!-- =============== -->
-<!-- 자유게시판 섹션 -->
-<!-- =============== -->
 <section class="tc-section">
     <div class="tc-section-head">
         <h2 class="tc-section-title">자유게시판</h2>
@@ -207,13 +231,11 @@
                 <ul class="tc-free-list">
                     <c:forEach items="${recentFreeList}" var="f">
                         <li class="tc-free-item">
-                            <!-- 제목 -->
                             <a href="${ctx}/free/get?bno=${f.bno}" class="tc-link">
-                                <strong class="tc-free-title">
+                                <span class="tc-free-title">
                                     <c:out value="${f.title}"/>
-                                </strong>
+                                </span>
                             </a>
-                            <!-- 작성자 + 날짜 -->
                             <span class="tc-free-meta">
                                 · <c:out value="${f.writer}"/>
                                 <c:if test="${not empty f.regdate}">
@@ -229,9 +251,6 @@
     </c:choose>
 </section>
 
-<!-- ==================== -->
-<!-- 추천 캐러셀 JS 스크립트 -->
-<!-- ==================== -->
 <script>
 document.querySelectorAll('.tc-carousel').forEach(function(c){
   const track = c.querySelector('.tc-carousel-track');
