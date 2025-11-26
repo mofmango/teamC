@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.mnu.mapper.NutritionMapper">
+
+    <!-- NutritionVO 매핑 -->
+    <resultMap id="NutritionMap" type="org.mnu.domain.NutritionVO">
+        <id     property="recipeId"    column="RECIPE_ID"/>
+        <result property="calories"    column="CALORIES"/>
+        <result property="carbohydrate" column="CARBOHYDRATE"/>
+        <result property="protein"     column="PROTEIN"/>
+        <result property="fat"         column="FAT"/>
+        <result property="ingHash"     column="ING_HASH"/>
+        <result property="computedAt"  column="COMPUTED_AT"/>
+    </resultMap>
+
+    <!-- 1) RECIPE_ID로 조회 -->
+    <select id="selectByRecipeId" parameterType="long" resultMap="NutritionMap">
+        SELECT
+            RECIPE_ID,
+            CALORIES,
+            CARBOHYDRATE,
+            PROTEIN,
+            FAT,
+            ING_HASH,
+            COMPUTED_AT
+        FROM
+            TBL_NUTRITION
+        WHERE
+            RECIPE_ID = #{recipeId}
+    </select>
+
+    <!-- 2) 존재 여부 확인 (있으면 1, 없으면 0) -->
+    <select id="existsByRecipeId" parameterType="long" resultType="int">
+        SELECT
+            CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM
+            TBL_NUTRITION
+        WHERE
+            RECIPE_ID = #{recipeId}
+    </select>
+
+    <!-- 3) 신규 INSERT -->
+    <insert id="insert" parameterType="org.mnu.domain.NutritionVO">
+        INSERT INTO TBL_NUTRITION (
+            RECIPE_ID,
+            CALORIES,
+            CARBOHYDRATE,
+            PROTEIN,
+            FAT,
+            ING_HASH,
+            COMPUTED_AT
+        ) VALUES (
+            #{recipeId},
+            #{calories},
+            #{carbohydrate},
+            #{protein},
+            #{fat},
+            #{ingHash},
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 4) UPDATE (RECIPE_ID 기준) -->
+    <update id="updateByRecipeId" parameterType="org.mnu.domain.NutritionVO">
+        UPDATE TBL_NUTRITION
+        SET
+            CALORIES      = #{calories},
+            CARBOHYDRATE  = #{carbohydrate},
+            PROTEIN       = #{protein},
+            FAT           = #{fat},
+            ING_HASH      = #{ingHash},
+            COMPUTED_AT   = SYSDATE
+        WHERE
+            RECIPE_ID     = #{recipeId}
+    </update>
+
+</mapper>

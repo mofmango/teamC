@@ -1,0 +1,133 @@
+@charset "UTF-8";
+
+/* 로그인/회원가입 공통 래퍼 */
+.tc-auth-wrapper {
+  min-height: calc(100vh - 160px); /* 헤더+푸터 높이 감안한 대략값 */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 16px 80px;
+}
+
+/* 실제 카드 박스 */
+.tc-auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px 26px 24px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+}
+
+/* 타이틀/설명 */
+.tc-auth-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.tc-auth-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+
+/* 폼 필드 공통 */
+.tc-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tc-auth-field label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.tc-auth-field input {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 0 12px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.tc-auth-field input::placeholder {
+  color: #7f8693;
+}
+
+.tc-auth-field input:focus {
+  border-color: #6b7280;
+}
+
+/* 로그인/회원가입 버튼 */
+.tc-auth-btn {
+  width: 100%;
+  margin-top: 6px;
+  height: 46px;
+  border-radius: 999px;
+  font-size: 15px;
+}
+
+/* 아래 문구 */
+.tc-auth-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+  gap: 8px;
+}
+
+.tc-auth-bottom a {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tc-auth-bottom a:hover {
+  text-decoration: underline;
+}
+
+/* 회원가입 페이지용 – 필드를 두 줄 이상 쓸 때 */
+.tc-auth-form.two-column {
+  gap: 16px;
+}
+
+.tc-auth-row {
+  display: flex;
+  gap: 10px;
+}
+
+.tc-auth-row .tc-auth-field {
+  flex: 1;
+}
+
+/* 작은 안내 문구 */
+.tc-auth-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* 모바일에서 간격 조금 줄이기 */
+@media (max-width: 600px) {
+  .tc-auth-wrapper {
+    padding-top: 40px;
+  }
+
+  .tc-auth-card {
+    padding: 22px 18px 20px;
+  }
+}

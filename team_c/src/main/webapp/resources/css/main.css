@@ -1,0 +1,526 @@
+@charset "UTF-8";
+/* ===== main.css (공통 다크 테마 + 메인 레이아웃) ===== */
+
+:root{
+  --bg:#141518;
+  --panel:#1b1d22;
+  --panel-2:#20232a;
+  --border:#2b2f37;
+  --text:#f5f7ff;
+  --muted:#a9afba;
+  --brand:#ffffff;
+  --accent:#ff5a7a;
+}
+
+/* 전체 배경 */
+body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+}
+
+/* =============== */
+/* 헤더 영역       */
+/* =============== */
+.tc-header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:#0f1013;
+  border-bottom:1px solid #1f242c;
+}
+
+.tc-header-inner{
+  max-width:1080px;
+  margin:0 auto;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.tc-logo{
+  color:#f9fafb;
+  font-weight:900;
+  font-size:20px;
+  text-decoration:none;
+  letter-spacing:.02em;
+}
+
+/* 네비게이션 */
+.tc-nav{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.tc-nav-item{
+  font-size:15px;
+  color:var(--muted);
+  text-decoration:none;
+  padding:6px 2px;
+  border-bottom:2px solid transparent;
+  transition:.15s;
+}
+
+.tc-nav-item:hover{
+  color:var(--text);
+  border-color:var(--text);
+}
+
+/* 로그인/회원가입 */
+.tc-auth{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.tc-user{
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* 헤더 안의 버튼은 높이 통일 */
+.tc-header .tc-btn{
+  height:36px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  white-space:nowrap;
+}
+
+/* =============== */
+/* 공통 버튼       */
+/* =============== */
+.tc-btn{
+  border:none;
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.tc-btn-primary{
+  background:var(--brand);
+  color:#111827;
+}
+
+.tc-btn-ghost{
+  background:var(--panel-2);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+.tc-btn-primary:hover{ opacity:.9; }
+.tc-btn-ghost:hover{ background:#2a2e37; }
+
+/* =============== */
+/* 히어로 영역     */
+/* =============== */
+
+.tc-hero{
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  padding:44px 16px 32px;
+}
+
+.tc-hero-inner{
+  max-width:1080px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1.25fr 0.75fr;
+  gap:28px;
+  align-items:stretch;
+}
+
+@media(max-width:900px){
+  .tc-hero-inner{
+    grid-template-columns:1fr;
+  }
+}
+
+.tc-hero-left{
+  padding-right:10px;
+}
+
+.tc-hero-title{
+  font-size:40px;
+  font-weight:900;
+  letter-spacing:-.03em;
+  margin:0 0 10px;
+  color:#f9fafb;
+}
+
+.tc-hero-sub{
+  font-size:16px;
+  color:#cbd5f5;
+  margin:0 0 18px;
+}
+
+/* 검색바 */
+.tc-searchbar{
+  display:grid;
+  grid-template-columns:120px 1fr auto;
+  gap:8px;
+  align-items:center;
+  max-width:720px;
+}
+
+.tc-select{
+  height:46px;
+  padding:0 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--panel);
+  color:var(--text);
+}
+
+.tc-input{
+  height:46px;
+  padding:0 14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  outline:none;
+  font-size:15px;
+  background:var(--panel);
+  color:var(--text);
+}
+
+.tc-input::placeholder{ color:#7f8693; }
+.tc-input:focus{ border-color:#6b7280; }
+
+/* 태그 칩 */
+.tc-chip-row{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.tc-chip{
+  background:var(--panel-2);
+  border:1px solid var(--border);
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:13px;
+  color:var(--text);
+  text-decoration:none;
+  transition:.12s;
+}
+.tc-chip:hover{
+  background:#2a2e37;
+}
+
+/* 히어로 오른쪽 카드 */
+.tc-hero-right{
+  display:flex;
+  align-items:stretch;
+}
+
+.tc-card-hero{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 8px 25px rgba(0,0,0,.45);
+  width:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.tc-card-hero .tc-card-img{
+  width:100%;
+  height:220px;
+  background:var(--panel-2);
+  position:relative;
+}
+
+.tc-card-hero .tc-card-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.tc-card-hero .tc-card-body{
+  padding:14px 16px 16px;
+}
+
+.tc-card-hero .tc-card-title{
+  font-size:16px;
+  font-weight:800;
+  margin-bottom:4px;
+  height:auto;
+}
+
+.tc-card-hero .tc-card-meta{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.tc-card-hero .tc-more{
+  display:inline-block;
+  margin-top:6px;
+  font-size:13px;
+}
+
+/* 카드 없을 때 */
+.tc-hero-right .tc-empty{
+  height:100%;
+  border-radius:18px;
+}
+
+/* =============== */
+/* 섹션 공통       */
+/* =============== */
+.tc-section{
+  max-width:1080px;
+  margin:26px auto;
+  padding:0 16px;
+}
+
+.tc-section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom:12px;
+  gap:10px;
+}
+
+.tc-section-title{
+  font-size:20px;
+  font-weight:800;
+  color: var(--text);
+}
+
+.tc-section-sub{
+  font-size:13px;
+  color:var(--muted);
+  margin-left:auto;
+  text-align:right;
+}
+
+.tc-more{
+  font-size:14px;
+  font-weight:700;
+  color:var(--text);
+  text-decoration:none;
+  opacity:.9;
+}
+.tc-more:hover{ text-decoration:underline; }
+
+/* 빈 상태 */
+.tc-empty{
+  background:var(--panel);
+  border:1px dashed var(--border);
+  padding:18px;
+  border-radius:12px;
+  color:var(--muted);
+  text-align:center;
+  width:100%;
+  box-sizing:border-box;
+}
+.tc-empty-dark{
+  background:var(--panel-2);
+}
+
+/* =============== */
+/* 카드 & 그리드   */
+/* =============== */
+
+.tc-card-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+@media(max-width:1024px){
+  .tc-card-grid{ grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:720px){
+  .tc-card-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:480px){
+  .tc-card-grid{ grid-template-columns:1fr; }
+}
+
+.tc-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,.25);
+  text-decoration:none;
+  color:var(--text);
+  transition:.12s;
+}
+
+.tc-card:hover{
+  transform:translateY(-2px);
+  border-color:#3a3f49;
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+}
+
+.tc-card-img{
+  width:100%;
+  aspect-ratio:1/1;
+  background:var(--panel-2);
+  position:relative;
+}
+
+.tc-card-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.tc-card-noimg{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#7f8693;
+  font-weight:800;
+}
+
+.tc-card-body{ padding:12px; }
+
+.tc-card-title{
+  font-size:15px;
+  font-weight:800;
+  line-height:1.35;
+  height:40px;
+  overflow:hidden;
+  color:var(--text);
+}
+
+.tc-card-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.tc-like{
+  font-weight:800;
+  color:var(--accent);
+}
+
+/* 추천 레시피 캐러셀용 카드 약간 강조 */
+.tc-recipe-card{
+  min-width:230px;
+}
+
+/* =============== */
+/* 추천 캐러셀     */
+/* =============== */
+
+.tc-carousel{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.tc-carousel-track{
+  overflow-x:auto;
+  display:flex;
+  gap:12px;
+  scroll-behavior:smooth;
+  padding:4px 2px 8px;
+}
+
+.tc-carousel-track::-webkit-scrollbar{
+  height:6px;
+}
+.tc-carousel-track::-webkit-scrollbar-thumb{
+  background:#333843;
+  border-radius:999px;
+}
+
+.tc-carousel-btn{
+  width:32px;
+  height:32px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--panel-2);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.tc-carousel-btn:hover{
+  background:#2a2e37;
+}
+
+/* =============== */
+/* 자유게시판      */
+/* =============== */
+
+.tc-col{
+  width:100%;
+}
+
+.tc-free-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+.tc-free-item{
+  padding:10px 14px;
+  display:flex;
+  align-items:baseline;
+  font-size:14px;
+}
+
+.tc-free-item:not(:last-child){
+  border-bottom:1px solid var(--border);
+}
+
+.tc-free-item:hover{
+  background:#2a2e37;
+}
+
+.tc-link{
+  text-decoration:none;
+  color:var(--text);
+}
+
+.tc-link strong{
+  font-weight:600;
+  display:inline-block;
+  max-width:calc(100% - 120px);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* footer 쪽 기본 (혹시 쓸 경우) */
+.tc-footer{
+  max-width:1080px;
+  margin:40px auto 24px;
+  padding:0 16px;
+  font-size:12px;
+  color:var(--muted);
+  text-align:left;
+}
+
+.tc-page-title{
+  color: var(--text);
+  font-size: 28px;
+  font-weight: 800;
+  margin: 32px 0 8px;
+}

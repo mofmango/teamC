@@ -8,12 +8,24 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>레시피 목록</title>
 
 <!-- 공통 메인 스타일 -->
 <link rel="stylesheet" href="${cp}/resources/css/main.css">
 <!-- 레시피 목록 전용 스타일 -->
 <link rel="stylesheet" href="${cp}/resources/css/recipe_list.css">
+
+<!-- ✅ 레시피 목록 제목 색상 강제 오버라이드 -->
+<style>
+    /* 상단 "레시피 목록" 제목 흰색으로 */
+    .tc-hero .tc-page-title {
+        color: #e8eaf0 !important;   /* 다크테마 텍스트 컬러 */
+    }
+
+    /* 바로 아래 설명 문구도 살짝 밝게 */
+    .tc-hero p {
+        color: #a9afba !important;
+    }
+</style>
 </head>
 <body>
 
@@ -53,7 +65,7 @@
 
     <!-- ===== 타이틀/설명 ===== -->
     <section class="tc-hero">
-        <h1>레시피 목록</h1>
+        <h1 class="tc-page-title">레시피 목록</h1>
         <p>냉장고 재료 기반 추천/인기 레시피를 한 번에!</p>
     </section>
 

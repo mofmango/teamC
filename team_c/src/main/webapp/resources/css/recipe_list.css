@@ -1,0 +1,234 @@
+@charset "UTF-8";
+/* 레시피 목록 화면 전용 */
+
+/* 공통 레이아웃 */
+.tc-container {
+  width: min(1200px, 92%);
+  margin: 0 auto;
+  padding: 24px 0 80px;
+}
+
+/* 헤더 */
+.tc-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #111318;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.tc-header-inner {
+  width: min(1200px, 92%);
+  margin: 0 auto;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.tc-logo {
+  font-weight: 800;
+  color: white;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+.tc-nav {
+  display: flex;
+  gap: 14px;
+  margin-left: 10px;
+  flex: 1;
+}
+.tc-nav a {
+  color: #c9cdd8;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.tc-nav a.active, .tc-nav a:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+.tc-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tc-user-name {
+  color: #e6e9f2;
+  font-size: 14px;
+}
+
+/* 버튼 */
+.tc-btn {
+  background: #2e6cf6;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}
+.tc-btn.small { padding: 6px 10px; font-size: 13px; }
+.tc-btn.primary { background: #2e6cf6; }
+.tc-btn.ghost { background: transparent; border: 1px solid rgba(255,255,255,0.15); }
+
+/* Hero */
+.tc-hero {
+  padding: 10px 0 20px;
+}
+.tc-hero h1 {
+  font-size: 26px;
+  margin: 0 0 6px;
+  color: #111;
+}
+.tc-hero p {
+  margin: 0;
+  color: #666;
+}
+
+/* 액션 영역 */
+.tc-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.tc-action-left { display: flex; gap: 8px; align-items: center; }
+
+.tc-sort {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.tc-pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f2f4f8;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+}
+.tc-pill.active {
+  background: #111318;
+  color: #fff;
+}
+
+/* 검색바 */
+.tc-search {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.tc-search select, .tc-search input {
+  height: 36px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 14px;
+}
+.tc-search input { flex: 1; }
+
+/* 카드 그리드 */
+.tc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.tc-card {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #eee;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.tc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+}
+
+.tc-card-img {
+  width: 100%;
+  height: 170px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tc-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tc-card-img-placeholder {
+  color: #999;
+  font-size: 13px;
+}
+
+.tc-card-body {
+  padding: 12px;
+}
+.tc-card-title {
+  font-size: 16px;
+  margin: 0 0 6px;
+  color: #111;
+  line-height: 1.3;
+  height: 40px;
+  overflow: hidden;
+}
+
+.tc-card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+.tc-card-sub {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 6px;
+}
+.tc-card-date {
+  font-size: 12px;
+  color: #888;
+}
+
+/* 페이징 */
+.tc-pagination {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.tc-page-btn, .tc-page-num {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  font-size: 13px;
+  color: #333;
+  background: #fff;
+}
+.tc-page-num.active {
+  background: #111318;
+  color: #fff;
+  border-color: #111318;
+}
+
+.tc-hero .tc-page-title {
+  color: var(--text) !important;   /* 다크테마 기본 텍스트 색 (#e8eaf0) */
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+/* 바로 아래 설명 문구 색상도 살짝 밝게 */
+.tc-hero p {
+  color: var(--muted);
+}
+

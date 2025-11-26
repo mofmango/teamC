@@ -1,0 +1,197 @@
+@charset "UTF-8";
+/* ===========================
+   HOME PAGE (home.jsp) 전용
+   공통(main.css) 레이아웃은 건드리지 않고
+   추천/자유게시판/약간의 보정만 적용
+   =========================== */
+
+:root{
+  --bg:#141518;
+  --panel:#1b1d22;
+  --panel-2:#20232a;
+  --border:#2b2f37;
+  --text:#e8eaf0;
+  --muted:#a9afba;
+  --brand:#ffffff;
+  --accent:#ff5a7a;
+}
+
+/* 섹션 텍스트 톤만 살짝 맞추기 */
+.tc-hero,
+.tc-section {
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+
+/* 섹션 공통 */
+.tc-section{
+  max-width:1080px;
+  margin:26px auto;
+  padding:0 16px;
+}
+
+.tc-section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom:12px;
+  gap:10px;
+}
+
+.tc-section-title{
+  font-size:20px;
+  font-weight:800;
+}
+
+.tc-section-sub{
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* “더보기” 링크 */
+.tc-more{
+  font-size:14px;
+  font-weight:700;
+  color:var(--text);
+  text-decoration:none;
+  opacity:.9;
+}
+.tc-more:hover{ text-decoration:underline; }
+
+/* Empty 박스 */
+.tc-empty{
+  background:var(--panel);
+  border:1px dashed var(--border);
+  padding:18px;
+  border-radius:12px;
+  color:var(--muted);
+  text-align:center;
+  width:100%;
+  box-sizing:border-box;
+}
+.tc-empty-box{ padding:30px 18px; }
+.tc-empty-btn{
+  display:inline-block;
+  margin-top:10px;
+}
+
+/* ===========================
+   추천 레시피 (3개 그리드)
+   =========================== */
+
+.tc-section-reco{
+  margin-top:18px;
+}
+
+.tc-reco-row{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:16px;
+}
+
+@media(max-width:900px){
+  .tc-reco-row{
+    grid-template-columns:repeat(2, 1fr);
+  }
+}
+@media(max-width:600px){
+  .tc-reco-row{
+    grid-template-columns:1fr;
+  }
+}
+
+/* 추천 카드는 기존 카드 스타일을 살짝 강조 */
+.tc-reco-card{
+  border-color:var(--accent);
+}
+
+.tc-reco-img{
+  aspect-ratio:3/2;
+}
+
+.tc-reco-title{
+  height:auto;
+}
+
+.tc-reco-meta{
+  color:var(--text);
+  font-size:13px;
+  margin-top:4px;
+}
+.tc-reco-meta .tc-like{
+  margin-right:8px;
+}
+
+/* ===========================
+   자유게시판 리스트
+   =========================== */
+
+.tc-free-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+.tc-free-item{
+  padding:12px 14px;
+  display:flex;
+  align-items:baseline;
+  font-size:15px;
+}
+
+.tc-free-item:not(:last-child){
+  border-bottom:1px solid var(--border);
+}
+
+.tc-free-item:hover{
+  background:#2a2e37;
+}
+
+.tc-link{
+  text-decoration:none;
+  color:var(--text);
+  flex:1;
+}
+.tc-link strong{
+  font-weight:600;
+  display:inline-block;
+  max-width: calc(100% - 100px);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.tc-free-meta{
+  font-size:13px;
+  color:var(--muted);
+  margin-left:8px;
+}
+
+/* ===========================
+   버튼 보정
+   =========================== */
+.tc-btn{
+  border:none;
+  border-radius:10px;
+  padding:10px 14px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.tc-btn-primary{
+  background:var(--brand);
+  color:#111;
+  height:46px;
+}
+
+.tc-btn-ghost{
+  background:var(--panel-2);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+.tc-btn-primary:hover{ opacity:.9; }
+.tc-btn-ghost:hover{ background:#2a2e37; }

@@ -1,0 +1,124 @@
+@charset "UTF-8";
+
+/* 로그인 / 회원가입 페이지 공통 스타일 (다크 테마) */
+
+:root{
+  --bg:#141518;
+  --panel:#1b1d22;
+  --panel-2:#20232a;
+  --border:#2b2f37;
+  --text:#e8eaf0;
+  --muted:#a9afba;
+  --brand:#ffffff;
+  --accent:#4f8cff;
+}
+
+/* body에 tc-auth-page 클래스가 있을 때 레이아웃 조정 */
+.tc-auth-page {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* 헤더 아래 영역을 세로/가로 중앙 정렬 */
+.tc-auth-page .tc-container {
+  max-width: 480px;                /* 카드 폭 */
+  min-height: calc(100vh - 72px);  /* 헤더 높이만큼 빼고 */
+  margin: 0 auto;
+  padding: 40px 16px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 카드 전체 */
+.tc-auth-card {
+  width: 100%;
+  background: var(--panel);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+  padding: 28px 28px 30px;
+}
+
+/* 타이틀 / 설명 */
+.tc-auth-title {
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.tc-auth-sub {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* 오류 메시지 */
+.tc-auth-error {
+  margin-top: 14px;
+  margin-bottom: -4px;
+  text-align: center;
+  font-size: 13px;
+  color: #ff6b6b;
+}
+
+/* 폼 */
+.tc-auth-form {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tc-auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tc-auth-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tc-auth-input {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  padding: 0 12px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+}
+
+.tc-auth-input::placeholder {
+  color: #7f8693;
+}
+.tc-auth-input:focus {
+  border-color: var(--accent);
+}
+
+/* 버튼 (기존 main.css 의 tc-btn / tc-btn-primary 사용을 전제) */
+.tc-auth-submit {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* 하단 링크 영역 */
+.tc-auth-footer {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tc-auth-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.tc-auth-footer a:hover {
+  text-decoration: underline;
+}
