@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* 로그인 / 회원가입 페이지 공통 스타일 (다크 테마) */
+/* ========== 로그인 / 회원가입 공통 (다크 테마용) ========== */
 
 :root{
   --bg:#141518;
@@ -13,26 +13,31 @@
   --accent:#4f8cff;
 }
 
-/* body에 tc-auth-page 클래스가 있을 때 레이아웃 조정 */
-.tc-auth-page {
+/* 전체 페이지 배경 톤 맞추기 */
+body.tc-auth-page {
   background: var(--bg);
   color: var(--text);
 }
 
-/* 헤더 아래 영역을 세로/가로 중앙 정렬 */
-.tc-auth-page .tc-container {
-  max-width: 480px;                /* 카드 폭 */
-  min-height: calc(100vh - 72px);  /* 헤더 높이만큼 빼고 */
-  margin: 0 auto;
-  padding: 40px 16px 56px;
+.tc-auth-section {
+  /* 헤더 높이(약 72px)를 뺀 나머지 화면 전체를 꽉 채움 */
+  width: 100%; 
+  min-height: calc(100vh - 72px); 
+  
+  /* 플렉스박스로 정중앙 정렬 */
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;     /* 수직 중앙 */
+  justify-content: center; /* 수평 중앙 */
+  
+  /* 내부 여백 */
+  padding: 40px 16px;
+  box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
 }
 
-/* 카드 전체 */
+/* 실제 카드 박스 */
 .tc-auth-card {
   width: 100%;
+  max-width: 480px;
   background: var(--panel);
   border-radius: 18px;
   border: 1px solid var(--border);
@@ -40,7 +45,7 @@
   padding: 28px 28px 30px;
 }
 
-/* 타이틀 / 설명 */
+/* 타이틀/서브텍스트 */
 .tc-auth-title {
   font-size: 24px;
   font-weight: 800;
@@ -54,7 +59,7 @@
   color: var(--muted);
 }
 
-/* 오류 메시지 */
+/* 에러 메시지 */
 .tc-auth-error {
   margin-top: 14px;
   margin-bottom: -4px;
@@ -100,13 +105,13 @@
   border-color: var(--accent);
 }
 
-/* 버튼 (기존 main.css 의 tc-btn / tc-btn-primary 사용을 전제) */
+/* 버튼은 main.css의 tc-btn / tc-btn-primary 사용 */
 .tc-auth-submit {
   width: 100%;
   margin-top: 10px;
 }
 
-/* 하단 링크 영역 */
+/* 하단 링크 */
 .tc-auth-footer {
   margin-top: 16px;
   text-align: center;
