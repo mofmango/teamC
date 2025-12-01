@@ -36,7 +36,7 @@
 <jsp:include page="/WEB-INF/views/includes/header.jsp"/>
 
 <section class="tc-page-section">
-    
+    <!-- 
     <div class="tc-top-bar">
         <c:if test="${not empty member}">
             <span><strong><c:out value="${member.username}"/></strong>님 환영합니다.</span>
@@ -44,7 +44,7 @@
             <a href="/member/logout" class="tc-btn tc-btn-outline">로그아웃</a>
         </c:if>
     </div>
-
+ 	-->
     <div class="tc-page-head">
         <h1 class="tc-page-title">자유 게시판</h1>
         <p class="tc-page-sub">자유롭게 이야기를 나누는 공간입니다.</p>
