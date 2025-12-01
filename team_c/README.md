@@ -1,7 +1,5 @@
 mac os로 구현해서 해당 경로들 윈도우용으로만 교체해주고 본인 오라클DB로 바꿔서 사용하면 됨
-http://localhost:8080/recipe/list 가 메인페이지임
-api를 gemini pro로 해서 레시피 불러올 때 로딩이 길음
-
+http://localhost:8080/ 가 메인페이지임
 -- 회원 테이블
 CREATE TABLE TBL_MEMBER (
     userid VARCHAR2(50) PRIMARY KEY,
@@ -157,6 +155,14 @@ CREATE TABLE TBL_REPORT (
     CONSTRAINT fk_report_reporter FOREIGN KEY (reporter_id) REFERENCES TBL_MEMBER(userid)
 );
 
+CREATE SEQUENCE seq_report;
+
+ALTER TABLE TBL_RECIPE_STEP ADD (ingredients VARCHAR2(500));
+ALTER TABLE TBL_RECIPE_STEP DROP COLUMN ingredients;
+ALTER TABLE TBL_RECIPE DROP COLUMN ingredients;
+ALTER TABLE TBL_RECIPE ADD (ingredients CLOB);
+
+
 CREATE TABLE TBL_COMMENT (
   comment_id    NUMBER          PRIMARY KEY,
   bno           NUMBER          NOT NULL,
@@ -190,14 +196,61 @@ ALTER TABLE TBL_NUTRITION
   REFERENCES TBL_RECIPE(BNO)
   ON DELETE CASCADE;
 
+CREATE SEQUENCE SEQ_COMMENT
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+------------------------------------------------------------------------------
+-- [SEQ_COMMENT] 안전 드랍 + 재생성
+------------------------------------------------------------------------------
 
-CREATE SEQUENCE seq_report;
+-- 1) SEQ_COMMENT 드랍(없어도 에러 안나게)
+BEGIN
+  EXECUTE IMMEDIATE 'DROP SEQUENCE SEQ_COMMENT';
+EXCEPTION
+  WHEN OTHERS THEN
+    IF SQLCODE != -2289 THEN -- ORA-02289: sequence does not exist
+      RAISE;
+    END IF;
+END;
+/
+COMMIT;
 
-ALTER TABLE TBL_RECIPE_STEP ADD (ingredients VARCHAR2(500));
-ALTER TABLE TBL_RECIPE_STEP DROP COLUMN ingredients;
-ALTER TABLE TBL_RECIPE DROP COLUMN ingredients;
-ALTER TABLE TBL_RECIPE ADD (ingredients CLOB);
+-- 2) SEQ_COMMENT 생성
+CREATE SEQUENCE SEQ_COMMENT
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+/
 
+-- 자유게시판 댓글 테이블
+CREATE TABLE TBL_FREE_REPLY (
+    rno        NUMBER(10,0)   PRIMARY KEY,      -- 댓글 번호
+    bno        NUMBER(10,0)   NOT NULL,         -- 자유게시판 글 번호
+    reply      CLOB           NOT NULL,         -- 댓글 내용
+    replyer    VARCHAR2(50)   NOT NULL,         -- 작성자 ID (TBL_MEMBER.userid)
+    replydate  DATE           DEFAULT SYSDATE,  -- 작성일
+    CONSTRAINT fk_free_reply_board
+        FOREIGN KEY (bno) REFERENCES TBL_FREE_BOARD(bno) ON DELETE CASCADE,
+    CONSTRAINT fk_free_reply_member
+        FOREIGN KEY (replyer) REFERENCES TBL_MEMBER(userid) ON DELETE CASCADE
+);
+
+-- 자유게시판 댓글 시퀀스
+CREATE SEQUENCE SEQ_FREE_REPLY
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+
+INSERT INTO TBL_MEMBER(userid, userpw, username, email, role)
+VALUES ('admin', '111111', '관리자', 'admin@example.com', 'ROLE_ADMIN');
+
+INSERT INTO TBL_MEMBER(userid, userpw, username, email, role)
+VALUES ('user1', '222222', '일반유저', 'user1@example.com', 'ROLE_USER');
 
 
 commit;
