@@ -36,30 +36,26 @@ public class NutritionServiceImpl implements NutritionService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    /**
-     * (기존) 재료 문자열만 받아서 바로 Gemini로 분석하는 메서드.
-     *  - DB 저장 없이 결과만 반환 (테스트 용도로 그대로 살림)
-     */
     @Override
     public NutritionVO getNutritionInfo(String ingredients) {
         if (ingredients == null) ingredients = "";
         return callGeminiAndParse(ingredients);
     }
 
-    /**
-     * 레시피 상세 조회 시 — DB에서만 영양 성분 읽어오기 (Gemini 호출 없음)
-     */
+    
+     // 레시피 상세 조회 시 — DB에서만 영양 성분 읽어오기 (Gemini 호출 없음)
+     
     @Override
     public NutritionVO getByRecipeId(Long recipeId) {
         if (recipeId == null) return null;
         return nutritionMapper.selectByRecipeId(recipeId);
     }
 
-    /**
-     * 레시피 작성/수정 시:
-     *  - 재료 문자열 해시(ingHash) 비교
-     *  - 변경된 경우에만 Gemini 호출
-     *  - TBL_NUTRITION 에 INSERT 또는 UPDATE
+    /*
+      레시피 작성/수정 시:
+       - 재료 문자열 해시(ingHash) 비교
+       - 변경된 경우에만 Gemini 호출
+       - TBL_NUTRITION 에 INSERT 또는 UPDATE
      */
     @Override
     public NutritionVO upsertForRecipe(Long recipeId, String ingredients) {
@@ -77,7 +73,7 @@ public class NutritionServiceImpl implements NutritionService {
             return existing;
         }
 
-        // Gemini 호출 → 영양성분 계산
+        // Gemini 호출 -> 영양성분 계산
         NutritionVO analyzed = callGeminiAndParse(ingredients);
         analyzed.setRecipeId(recipeId);
         analyzed.setIngHash(ingHash);
@@ -95,15 +91,11 @@ public class NutritionServiceImpl implements NutritionService {
         return nutritionMapper.selectByRecipeId(recipeId);
     }
 
-    // ============================================================
-    //  밑에는 네가 원래 쓰던 Gemini 로직 그대로 (패키지만 맞춰서 이동)
-    // ============================================================
-
     // Gemini 호출 + 파싱 통합
     private NutritionVO callGeminiAndParse(String ingredients) {
         NutritionVO nutritionVO = new NutritionVO();
 
-        // ✅ 현재는 테스트용으로 직접 키 입력 (운영시엔 환경변수로 관리)
+        // 현재는 테스트용으로 직접 키 입력 (운영시엔 환경변수로 관리)
         String apiKeyOrBearer = "AIzaSyCZGw-6q9jPOkv6dw16B61-6B_XUR5fiBI";
 
         String modelToUse = DEFAULT_MODEL;
@@ -139,7 +131,7 @@ public class NutritionServiceImpl implements NutritionService {
             if (success && generateResponse != null) {
                 JsonObject root = JsonParser.parseString(generateResponse).getAsJsonObject();
 
-                // ✅ 1) Gemini 응답의 candidates → content → parts[0].text 구조 처리
+                // 1) Gemini 응답의 candidates → content → parts[0].text 구조 처리
                 if (root.has("candidates")) {
                     JsonArray candidates = root.getAsJsonArray("candidates");
                     if (candidates.size() > 0) {
@@ -153,12 +145,12 @@ public class NutritionServiceImpl implements NutritionService {
                                     if (part.has("text")) {
                                         String text = part.get("text").getAsString();
 
-                                        // ✅ 백틱(```json ... ```) 제거
+                                        // 백틱(```json ... ```) 제거
                                         text = text.replace("```json", "")
                                                    .replace("```", "")
                                                    .trim();
 
-                                        // ✅ JSON 부분만 추출
+                                        // JSON 추출
                                         int start = text.indexOf('{');
                                         int end = text.lastIndexOf('}');
                                         if (start >= 0 && end > start) {
@@ -174,7 +166,7 @@ public class NutritionServiceImpl implements NutritionService {
                     }
                 }
 
-                // ✅ 2) 혹시 바로 JSON 객체로 오는 경우
+                // 2) 바로 JSON 객체로 오는 경우
                 if (root.has("calories") || root.has("protein") || root.has("carbohydrate")) {
                     fillNutritionFromJson(nutritionVO, root);
                     return nutritionVO;

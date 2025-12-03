@@ -188,7 +188,7 @@ public class RecipeServiceImpl implements RecipeService {
             return Collections.emptyList();
         }
 
-        // ✅ 공백/# 제거 + 중복 제거
+        // 공백/# 제거 + 중복 제거
         List<String> filtered = ingredientList.stream()
                 .filter(Objects::nonNull)
                 .map(s -> s.replace("#", "").trim())
@@ -234,9 +234,7 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeMapper.findByIngredients(ingredientList);
     }
 
-    // ======================================================
     // 메인페이지용
-    // ======================================================
 
     @Override
     public RecipeVO getHeroRecipe() {
@@ -249,7 +247,7 @@ public class RecipeServiceImpl implements RecipeService {
         Criteria cri = new Criteria();
         cri.setPageNum(1);
         cri.setAmount(limit);
-        cri.setSort("likes");  // ✅ RecipeMapper.xml에서 likes일 때만 좋아요 정렬
+        cri.setSort("likes");
         return recipeMapper.getList(cri);
     }
 
@@ -258,7 +256,7 @@ public class RecipeServiceImpl implements RecipeService {
         Criteria cri = new Criteria();
         cri.setPageNum(1);
         cri.setAmount(limit);
-        cri.setSort(null);     // ✅ 그 외는 기본 bno DESC(최신)
+        cri.setSort(null);
         return recipeMapper.getList(cri);
     }
 }

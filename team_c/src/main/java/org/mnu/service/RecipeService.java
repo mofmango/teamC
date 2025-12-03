@@ -41,9 +41,7 @@ public interface RecipeService {
 
     public List<RecipeVO> findByIngredients(List<String> ingredientList);
 
-    // =========================
-    // ✅ 메인페이지용
-    // =========================
+    // 메인페이지용
     public RecipeVO getHeroRecipe();                 // 좋아요 1등
     public List<RecipeVO> getTopLikedList(int limit);// 좋아요 TOP N
     public List<RecipeVO> getRecentList(int limit);  // 최신 N

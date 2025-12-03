@@ -13,7 +13,7 @@ public class LikeServiceImpl implements LikeService {
     private LikeMapper likeMapper;
     private RecipeMapper recipeMapper;
 
-    @Transactional // 두 개의 DB 작업이 모두 성공해야만 최종 반영되도록 보장
+    @Transactional
     @Override
     public void toggleLike(Long bno, String userid) {
         // 사용자가 이미 좋아요를 눌렀는지 확인
@@ -30,7 +30,6 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public int getLikeCount(Long bno) {
-        // RecipeMapper의 read 메서드를 재사용
         return recipeMapper.read(bno).getLike_count();
     }
 
