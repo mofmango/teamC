@@ -140,7 +140,7 @@
         SELECT COUNT(*) FROM TBL_LIKE WHERE userid = #{userid}
     </select>
 
-    <!-- ✅ 냉장고 재료 기반 추천: ingredients 컬럼 LIKE 매칭 -->
+    <!-- 냉장고 재료 기반 추천: ingredients 컬럼 LIKE 매칭 -->
     <select id="findByIngredients" resultType="org.mnu.domain.RecipeVO">
         SELECT
             r.*,
@@ -206,9 +206,6 @@
         </where>
     </select>
 
-    <!-- ========================= -->
-    <!-- [마이페이지/유저페이지] 작성 레시피 페이징 -->
-    <!-- ========================= -->
     <select id="getMyRecipeList" resultType="org.mnu.domain.RecipeVO">
         SELECT *
         FROM (
@@ -224,9 +221,6 @@
         WHERE rn BETWEEN #{cri.startRow} AND #{cri.endRow}
     </select>
 
-    <!-- ========================= -->
-    <!-- [마이페이지] 북마크 페이징 -->
-    <!-- ========================= -->
     <select id="getMyBookmarkList" resultType="org.mnu.domain.RecipeVO">
         SELECT *
         FROM (
@@ -243,9 +237,6 @@
         WHERE rn BETWEEN #{cri.startRow} AND #{cri.endRow}
     </select>
 
-    <!-- ========================= -->
-    <!-- [마이페이지] 좋아요 페이징 -->
-    <!-- ========================= -->
     <select id="getMyLikeList" resultType="org.mnu.domain.RecipeVO">
         SELECT *
         FROM (
