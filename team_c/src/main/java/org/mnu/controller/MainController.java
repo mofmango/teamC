@@ -29,16 +29,9 @@ public class MainController {
     public String main(HttpSession session, Model model) {
 
         log.info("====== MAIN PAGE ======");
-
-        // -----------------------------
-        // 1) 세션에서 로그인 유저 확인
-        // -----------------------------
         MemberVO loginMember = (MemberVO) session.getAttribute("member");
         log.info("[MAIN] session.member = " + loginMember);
 
-        // -----------------------------
-        // 2) 냉장고 기반 추천 (로그인한 경우)
-        // -----------------------------
         if (loginMember != null) {
             String userid = loginMember.getUserid();
             log.info("[MAIN] login userid = " + userid);
@@ -55,9 +48,6 @@ public class MainController {
             model.addAttribute("recommendList", recommendList);
         }
 
-        // -----------------------------
-        // 3) 대표(좋아요 1위) 레시피
-        // -----------------------------
         Criteria bestCri = new Criteria();
         bestCri.setPageNum(1);
         bestCri.setAmount(1);
@@ -66,18 +56,12 @@ public class MainController {
         RecipeVO heroRecipe = topLiked != null && !topLiked.isEmpty() ? topLiked.get(0) : null;
         model.addAttribute("heroRecipe", heroRecipe);
 
-        // -----------------------------
-        // 4) 최신 레시피 8개
-        // -----------------------------
         Criteria recentCri = new Criteria();
         recentCri.setPageNum(1);
         recentCri.setAmount(8);
         recentCri.setSort("newest");
         model.addAttribute("recentList", recipeService.getList(recentCri));
 
-        // -----------------------------
-        // 5) 자유게시판 최신 5개
-        // -----------------------------
         Criteria freeCri = new Criteria();
         freeCri.setPageNum(1);
         freeCri.setAmount(5);
