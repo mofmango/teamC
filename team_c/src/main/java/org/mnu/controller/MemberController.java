@@ -32,7 +32,6 @@ public class MemberController {
     @Setter(onMethod_ = @Autowired)
     private RecipeService recipeService;
     
-    // FollowService 의존성 주입
     @Setter(onMethod_ = @Autowired)
     private FollowService followService;
 
@@ -121,21 +120,15 @@ public class MemberController {
                            HttpSession session) {
 
         log.info("====== " + userid + "님의 페이지로 이동 ======");
-
-        // ✅ 공백 방지
+        
         userid = userid.trim();
-
-        // ✅ 기본 페이징값
         if (cri.getPageNum() == 0) cri.setPageNum(1);
         if (cri.getAmount() == 0) cri.setAmount(10);
 
-        // 1. 페이지 주인 정보
         model.addAttribute("pageOwner", service.get(userid));
 
-        // 2. 페이지 주인이 쓴 글(페이징)
         model.addAttribute("myList", recipeService.getMyRecipeList(cri, userid));
 
-        // 3. total count → pageMaker
         int total = recipeService.countByWriter(userid);
         model.addAttribute("pageMaker", new PageDTO(cri, total));
         model.addAttribute("cri", cri);
@@ -154,7 +147,6 @@ public class MemberController {
         return "/member/userpage";
     }
 
-    // =============== [마이페이지 - 내가 쓴 글] 페이징 ===============
     @GetMapping("/myposts")
     public String myposts(Criteria cri, HttpSession session, Model model, RedirectAttributes rttr) {
         log.info("====== 내가 작성한 레시피 목록(페이징) ======");
@@ -170,17 +162,15 @@ public class MemberController {
         if (cri.getPageNum() == 0) cri.setPageNum(1);
         if (cri.getAmount() == 0) cri.setAmount(10);
 
-        // 서비스 호출 (구현: RecipeServiceImpl.getMyRecipeList)
         int total = recipeService.countByWriter(userid);
         model.addAttribute("list", recipeService.getMyRecipeList(cri, userid));
         model.addAttribute("cri", cri);
         model.addAttribute("pageMaker", new PageDTO(cri, total));
-        model.addAttribute("userid", userid);   // JSP에서 다시 링크 만들 때 사용
+        model.addAttribute("userid", userid);
 
         return "/member/myPostList";
     }
 
-    // =============== [마이페이지 - 북마크] 페이징 ===============
     @GetMapping("/mybookmarks")
     public String mybookmarks(Criteria cri, HttpSession session, Model model, RedirectAttributes rttr) {
         log.info("====== 내가 북마크한 레시피 목록(페이징) ======");
@@ -204,7 +194,6 @@ public class MemberController {
         return "/member/bookmarkList";
     }
 
-    // =============== [마이페이지 - 좋아요] 페이징 ===============
     @GetMapping("/mylikes")
     public String mylikes(Criteria cri, HttpSession session, Model model, RedirectAttributes rttr) {
         log.info("====== 내가 좋아요 누른 레시피 목록(페이징) ======");

@@ -288,7 +288,7 @@ public class RecipeController {
     */
     @PostMapping("/remove")
     public String remove(@RequestParam("bno") Long bno,
-                         @ModelAttribute("cri") Criteria cri,   // ★ 추가
+                         @ModelAttribute("cri") Criteria cri,
                          RedirectAttributes rttr) {
         log.info("====== 레시피 삭제 처리 ======");
         if (service.remove(bno)) {

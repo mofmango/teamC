@@ -28,9 +28,6 @@ import lombok.extern.log4j.Log4j;
 public class FreeReplyController {
 
     private FreeReplyService service;
-
-    // ------------------ 댓글 등록 ------------------
-    // free/get.jsp -> POST /replies/new  (JSON: {reply, replyer, bno})
     @PostMapping(
         value = "/new",
         consumes = "application/json",
@@ -45,7 +42,6 @@ public class FreeReplyController {
             return new ResponseEntity<>("login_required", HttpStatus.UNAUTHORIZED);
         }
 
-        // 클라이언트에서 넘어온 replyer 는 무시하고 세션 기준으로 설정
         vo.setReplyer(member.getUserid());
 
         log.info("free reply register: " + vo);
@@ -57,8 +53,6 @@ public class FreeReplyController {
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // ------------------ 댓글 목록 ------------------
-    // free/get.jsp -> GET /replies/pages/{bno}/{page}.json
     @GetMapping(
         value = "/pages/{bno}/{page}.json",
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -73,8 +67,6 @@ public class FreeReplyController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    // ------------------ 댓글 삭제 ------------------
-    // free/get.jsp -> DELETE /replies/{rno}
     @DeleteMapping(
         value = "/{rno}",
         produces = MediaType.TEXT_PLAIN_VALUE
@@ -93,7 +85,6 @@ public class FreeReplyController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        // 본인 댓글만 삭제
         if (!member.getUserid().equals(reply.getReplyer())) {
             return new ResponseEntity<>("forbidden", HttpStatus.FORBIDDEN);
         }

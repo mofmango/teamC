@@ -16,15 +16,7 @@ public class HomeController {
 
     @GetMapping("") 
     public String home(Locale locale, Model model) {
-
-        // ==============================
-        // 여기부터는 네 기존 로직 그대로
-        // ==============================
         log.info("HomeController /home 진입");
-
-        // 예: model.addAttribute(...)
-        // ==============================
-
-        return "home"; // /WEB-INF/views/home.jsp 로 가는 기존 뷰명 유지
+        return "home";
     }
 }

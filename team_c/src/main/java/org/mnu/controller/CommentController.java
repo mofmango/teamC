@@ -31,20 +31,16 @@ public class CommentController {
     public String register(CommentVO vo,
                            HttpServletRequest req,
                            HttpSession session) {
-
-        // reply -> content 보정
         if (vo.getContent() == null || vo.getContent().trim().isEmpty()) {
             String reply = req.getParameter("reply");
             if (reply != null) vo.setContent(reply);
         }
 
-        // replyer -> userid 보정
         if (vo.getUserid() == null || vo.getUserid().trim().isEmpty()) {
             String replyer = req.getParameter("replyer");
             if (replyer != null) vo.setUserid(replyer);
         }
 
-        // 그래도 없으면 세션 값
         MemberVO member = (MemberVO) session.getAttribute("member");
         if (member != null && (vo.getUserid() == null || vo.getUserid().trim().isEmpty())) {
             vo.setUserid(member.getUserid());
@@ -56,7 +52,6 @@ public class CommentController {
         return "redirect:/recipe/get?bno=" + vo.getBno();
     }
 
-    // ✅ 댓글 단건 삭제 AJAX
     @PostMapping("/remove")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> remove(
